@@ -149,7 +149,7 @@ public class LoginPage {
     private boolean TryLogIn(JTextField mainLoginField, JPasswordField passwordField) {
         Map<Integer, User> users = usersDatabase.importDataFromFile();
         for (User user : users.values()) {
-            if(Objects.equals(user.getLoginField(), mainLoginField.getText()) && Arrays.equals(user.getPassword().toCharArray(), passwordField.getPassword())) {
+            if(Objects.equals(user.getEmail(), mainLoginField.getText()) && Arrays.equals(user.getPassword().toCharArray(), passwordField.getPassword())) {
                 Main.currentUser = user;
                 System.out.println("tu" + user);
                 return true;
