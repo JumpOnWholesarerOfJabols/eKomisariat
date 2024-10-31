@@ -14,7 +14,7 @@ public class HomePage {
 
         String welcome = "Witaj ";
         if(Main.currentUser != null) {
-            welcome += Main.currentUser.getLoginField();
+            welcome += Main.currentUser.getName();
         }
         JLabel welcomeLabel = new JLabel(welcome);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));

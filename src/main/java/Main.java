@@ -3,6 +3,7 @@ package main.java;
 import main.java.database.DatabaseOperations;
 import main.java.database.UsersDatabase;
 import main.java.model.User;
+import main.java.view.HomePage;
 import main.java.view.LoginPage;
 import main.java.view.RegisterPage;
 
@@ -14,7 +15,7 @@ public class Main {
     public static User currentUser;
 
     public static void main(String[] args) {
-        //testy();
+        testy();
         JFrame f = new JFrame("eKomisariat");
         f.setMinimumSize(new Dimension(1400, 900));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,7 +32,6 @@ public class Main {
         RegisterPage registerPage = new RegisterPage();
         JPanel registerPanel = registerPage.generateRegisterPage(cardLayout, mainPanel);
 
-        // Add both loginPanel and newPagePanel to the CardLayout
         mainPanel.add(loginPanel, "loginPage");
         mainPanel.add(registerPanel, "registerPage");
 
@@ -45,10 +45,9 @@ public class Main {
         String folderPath = "src/main/resources/users/";
         DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
 
-        usersDatabase.addItemToDatabase(11, new User("1", "user1", "user1"));
-        usersDatabase.addItemToDatabase(12, new User("2", "user22", "user22"));
-        usersDatabase.addItemToDatabase(13, new User("4", "user2233", "user2233"));
-        usersDatabase.addItemToDatabase(14, new User("777", "user444", "4444"));
+//        usersDatabase.addItemToDatabase(new User("imie1", "nazwisko1", "x@gmail.com", "123"));
+//        usersDatabase.addItemToDatabase(new User("imie2", "nazwisko2", "y", "123"));
+//        usersDatabase.addItemToDatabase(new User("imie3", "nazwisko3", "z@gmail.com", "321"));
 
         Map<Integer, User> data = usersDatabase.importDataFromFile();
         data.forEach((id, user) -> System.out.println(user));
