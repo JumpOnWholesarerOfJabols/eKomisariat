@@ -17,7 +17,7 @@ public class Main {
         //testy();
         JFrame f = new JFrame("eKomisariat");
         f.setMinimumSize(new Dimension(1400, 900));
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // Use CardLayout to manage multiple pages
         CardLayout cardLayout = new CardLayout();
