@@ -55,16 +55,26 @@ public class ReportDisplayPage {
     private JPanel createContentPanel() {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
-        contentPanel.setMinimumSize(new Dimension(700, 400));
 
+        // Zwiększamy minimalny rozmiar panelu
+        contentPanel.setMinimumSize(new Dimension(1000, 600));
+
+        // Dodanie wyśrodkowania komponentów w panelu
+        contentPanel.setLayout(new BorderLayout(20, 20));
+
+        // Tworzenie tabeli raportów
         JTable reportTable = createReportTable();
         JScrollPane scrollPane = new JScrollPane(reportTable);
 
-        contentPanel.setLayout(new BorderLayout());
+        // Ustawiamy preferowany rozmiar i minimalny rozmiar dla JScrollPane
+        scrollPane.setPreferredSize(new Dimension(900, 500));
+        scrollPane.setMinimumSize(new Dimension(800, 400));
+
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
         return contentPanel;
     }
+
 
     private JTable createReportTable() {
         String[] columnNames = {"ID Zgłoszenia", "ID Obywatela", "Tytuł Meldunku", "ID Funkcjonariusza", "Status", "Data"};
@@ -122,7 +132,7 @@ public class ReportDisplayPage {
         reportTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getClickCount() == 2) { // Sprawdzenie, czy było podwójne kliknięcie
+                if (e.getClickCount() == 2) {
                     int selectedRow = reportTable.rowAtPoint(e.getPoint());
 
                     if (selectedRow != -1) {

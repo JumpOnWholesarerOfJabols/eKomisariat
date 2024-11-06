@@ -59,17 +59,14 @@ public class ReportPage {
 
         GridBagConstraints gbc = createGridBagConstraints();
 
-        // Create and add title field
         titleField = createTitleField();
         contentPanel.add(titleField, gbc);
 
-        // Create and add description field with a scroll pane
         descriptionField = createDescriptionField();
         scrollPane = createScrollPane(descriptionField);
         gbc.gridy = 1;
         contentPanel.add(scrollPane, gbc);
 
-        // Create and add send button
         sendButton = createSendButton();
         gbc.gridy = 2;
         contentPanel.add(sendButton, gbc);
@@ -104,8 +101,8 @@ public class ReportPage {
     private JScrollPane createScrollPane(JTextArea descriptionField) {
         JScrollPane scrollPane = new JScrollPane(descriptionField);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(750, 150));  // Preferred size
-        scrollPane.setMinimumSize(new Dimension(500, 150)); // Minimum size
+        scrollPane.setPreferredSize(new Dimension(750, 150));
+        scrollPane.setMinimumSize(new Dimension(500, 150));
         return scrollPane;
     }
 
@@ -114,10 +111,9 @@ public class ReportPage {
         sendButton.setPreferredSize(new Dimension(120, 35));
 
         sendButton.addActionListener(e -> {
-            // Akcja po kliknięciu przycisku
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = Main.usersDatabase.getUserId(Main.currentUser);
+            int userID = 2137;//Main.usersDatabase.getUserId(Main.currentUser);
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);
