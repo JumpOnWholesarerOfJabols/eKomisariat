@@ -1,17 +1,19 @@
 package main.java.view;
 
+import com.toedter.calendar.JDateChooser;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.function.Predicate;
 
 public class FilterDialog extends JDialog {
-
     private final ReportDisplayPage reportDisplayPage;
     private final JPanel parentPanel;
+    private Predicate<Report> filter = null;
 
     public FilterDialog(Frame owner, ReportDisplayPage reportDisplayPage, JPanel parentPanel) {
         super(owner, "Filtry", true);
@@ -29,8 +31,10 @@ public class FilterDialog extends JDialog {
         JTextField reportTitleField = new JTextField();
         JTextField reportTitleFirstLetterField = new JTextField();
         JComboBox<Report.reportStatus> statusComboBox = new JComboBox<>(Report.reportStatus.values());
-        JTextField startDateField = new JTextField("YYYY-MM-DD");
-        JTextField endDateField = new JTextField("YYYY-MM-DD");
+
+        // Zamiast JTextField, używamy JDateChooser
+        JDateChooser startDateChooser = new JDateChooser();
+        JDateChooser endDateChooser = new JDateChooser();
 
         filterPanel.add(new JLabel("ID Użytkownika:"));
         filterPanel.add(userIdField);
@@ -42,10 +46,10 @@ public class FilterDialog extends JDialog {
         filterPanel.add(assignmentWorkerField);
         filterPanel.add(new JLabel("Status:"));
         filterPanel.add(statusComboBox);
-        filterPanel.add(new JLabel("Data początkowa (YYYY-MM-DD):"));
-        filterPanel.add(startDateField);
-        filterPanel.add(new JLabel("Data końcowa (YYYY-MM-DD):"));
-        filterPanel.add(endDateField);
+        filterPanel.add(new JLabel("Data początkowa:"));
+        filterPanel.add(startDateChooser);
+        filterPanel.add(new JLabel("Data końcowa:"));
+        filterPanel.add(endDateChooser);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -66,18 +70,22 @@ public class FilterDialog extends JDialog {
             Character firstLetter = reportTitleFirstLetterField.getText().isEmpty() ? null : reportTitleFirstLetterField.getText().charAt(0);
             Integer assignmentWorkerId = assignmentWorkerField.getText().isEmpty() ? null : Integer.parseInt(assignmentWorkerField.getText());
             Report.reportStatus status = (Report.reportStatus) statusComboBox.getSelectedItem();
-            LocalDate startDate = startDateField.getText().isEmpty() ? null : LocalDate.parse(startDateField.getText());
-            LocalDate endDate = endDateField.getText().isEmpty() ? null : LocalDate.parse(endDateField.getText());
 
-            Predicate<Report> userIdFilter = ReportsFilterMethods.filterUserId(userId);
-            Predicate<Report> titleFilter = ReportsFilterMethods.filterReportTitle(reportTitle);
-            Predicate<Report> firstLetterFilter = ReportsFilterMethods.filterReportTitleFirstLetter(firstLetter);
-            Predicate<Report> workerIdFilter = ReportsFilterMethods.filterReportAssigmentWorker(assignmentWorkerId);
-            Predicate<Report> statusFilter = ReportsFilterMethods.filterStatus(status);
-            Predicate<Report> startDateFilter = ReportsFilterMethods.filterStartDate(startDate);
-            Predicate<Report> endDateFilter = ReportsFilterMethods.filterEndDate(endDate);
+            // Zamiana daty z JDateChooser na LocalDate
+            LocalDate startDate = getDateFromChooser(startDateChooser);
+            LocalDate endDate = getDateFromChooser(endDateChooser);
 
-            Predicate<Report> combinedFilter = ReportsFilterMethods.combinedFilter(
+            // Tworzenie pustych filtrów, które będą ignorowane, jeśli pole jest puste
+            Predicate<Report> userIdFilter = (userId != null) ? ReportsFilterMethods.filterUserId(userId) : report -> true;
+            Predicate<Report> titleFilter = (reportTitle != null && !reportTitle.isEmpty()) ? ReportsFilterMethods.filterReportTitle(reportTitle) : report -> true;
+            Predicate<Report> firstLetterFilter = (firstLetter != null) ? ReportsFilterMethods.filterReportTitleFirstLetter(firstLetter) : report -> true;
+            Predicate<Report> workerIdFilter = (assignmentWorkerId != null) ? ReportsFilterMethods.filterReportAssigmentWorker(assignmentWorkerId) : report -> true;
+            Predicate<Report> statusFilter = (status != null) ? ReportsFilterMethods.filterStatus(status) : report -> true;
+            Predicate<Report> startDateFilter = (startDate != null) ? ReportsFilterMethods.filterStartDate(startDate) : report -> true;
+            Predicate<Report> endDateFilter = (endDate != null) ? ReportsFilterMethods.filterEndDate(endDate) : report -> true;
+
+            // Łączenie filtrów w jeden
+            filter = ReportsFilterMethods.combinedFilter(
                     userIdFilter,
                     titleFilter,
                     firstLetterFilter,
@@ -87,9 +95,21 @@ public class FilterDialog extends JDialog {
                     endDateFilter
             );
 
-            reportDisplayPage.changeDisplayedReports(combinedFilter);
-
             dispose();
         });
+
+    }
+
+    private LocalDate getDateFromChooser(JDateChooser dateChooser) {
+        if (dateChooser.getDate() == null) {
+            return null; // Return null if no date is selected
+        }
+        return dateChooser.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    public Predicate<Report> getFilter() {
+        return filter;
     }
 }

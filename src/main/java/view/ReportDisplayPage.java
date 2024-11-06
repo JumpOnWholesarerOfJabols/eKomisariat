@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -22,6 +21,7 @@ public class ReportDisplayPage {
     private final Map<Integer, Report> baseReports;
     private Map<Integer, Report> displayedReports;
     private final Predicate<Report> defaultFilter;
+    private Predicate<Report> currentFilter;
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         if (defaultFilter == null) {
@@ -187,7 +187,12 @@ public class ReportDisplayPage {
     }
 
     private void openFilterDialog() {
-        new FilterDialog(null, this, null).setVisible(true);
+        FilterDialog filterDialog = new FilterDialog(null, this, null);
+        filterDialog.setVisible(true);
+
+        currentFilter = filterDialog.getFilter();
+        currentFilter = getFilter(currentFilter);
+
     }
 
     private void showReportDetails(Integer reportId) {
@@ -197,7 +202,6 @@ public class ReportDisplayPage {
             detailsDialog.setVisible(true);
         }
     }
-
 
     private JScrollPane createScrollPane(JTextArea descriptionField) {
         JScrollPane scrollPane = new JScrollPane(descriptionField);
