@@ -5,6 +5,7 @@ import main.java.database.UsersDatabase;
 import main.java.model.User;
 import main.java.view.LoginPage;
 import main.java.view.RegisterPage;
+import main.java.view.ReportPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,9 +32,11 @@ public class Main {
         RegisterPage registerPage = new RegisterPage();
         JPanel registerPanel = registerPage.generateRegisterPage(cardLayout, mainPanel);
 
-        // Add both loginPanel and newPagePanel to the CardLayout
+
+            // Add both loginPanel and newPagePanel to the CardLayout
         mainPanel.add(loginPanel, "loginPage");
         mainPanel.add(registerPanel, "registerPage");
+        //mainPanel.add(reportPanel, "reportPage");
 
 
         // Set the JFrame visible
