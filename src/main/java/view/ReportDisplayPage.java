@@ -4,18 +4,23 @@ import main.java.Main;
 import main.java.model.Report;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ReportPage {
+public class ReportDisplayPage {
 
-    private JTextField titleField;
-    private JTextArea descriptionField;
-    private JButton sendButton;
-    private JScrollPane scrollPane;
+    // Mapa przechowująca raporty z ich identyfikatorami (Integer jako ID)
+    private final Map<Integer, Report> reports = new HashMap<>(Main.reportsDatabase.getAll());
 
-    // testowanie
+    // Główna metoda uruchamiająca GUI
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Report Page Test");
+        JFrame frame = new JFrame("Raporty");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 700);
 
@@ -23,8 +28,8 @@ public class ReportPage {
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
 
-        // Create ReportPage and add its JPanel to mainPanel
-        ReportPage reportPage = new ReportPage();
+        // Create ReportDisplayPage and add its JPanel to mainPanel
+        ReportDisplayPage reportPage = new ReportDisplayPage();
         JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
         mainPanel.add(reportPanel, "reportPanel");
 
@@ -53,83 +58,110 @@ public class ReportPage {
     }
 
     private JPanel createContentPanel() {
-        JPanel contentPanel = new JPanel(new GridBagLayout());
+        JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
         contentPanel.setMinimumSize(new Dimension(500, 300));
 
-        GridBagConstraints gbc = createGridBagConstraints();
+        // Create the table to display report details
+        JTable reportTable = createReportTable();
+        JScrollPane scrollPane = new JScrollPane(reportTable);
 
-        // Create and add title field
-        titleField = createTitleField();
-        contentPanel.add(titleField, gbc);
-
-        // Create and add description field with a scroll pane
-        descriptionField = createDescriptionField();
-        scrollPane = createScrollPane(descriptionField);
-        gbc.gridy = 1;
-        contentPanel.add(scrollPane, gbc);
-
-        // Create and add send button
-        sendButton = createSendButton();
-        gbc.gridy = 2;
-        contentPanel.add(sendButton, gbc);
+        contentPanel.setLayout(new BorderLayout());
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
 
         return contentPanel;
     }
 
-    private GridBagConstraints createGridBagConstraints() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);  // Dynamic margins
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        return gbc;
+    private JTable createReportTable() {
+        // Column names for the table
+        String[] columnNames = {"ReportID", "UserId", "Title", "Assigned Worker", "Status", "Date"};
+
+        // Create a DefaultTableModel to hold report data
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            // Disable cell editing
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        // Fill the table model with data from the reports map
+        for (Map.Entry<Integer, Report> entry : reports.entrySet()) {
+            Integer reportId = entry.getKey();
+            Report report = entry.getValue();
+
+            Object[] row = {
+                    reportId, // ReportID
+                    report.getUserId(), // UserId
+                    report.getTitle(), // Title
+                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()), // Assigned Worker
+                    report.getStatus(), // Status
+                    report.getDate() // Date
+            };
+
+            model.addRow(row);
+        }
+
+        // Create the table with the model
+        JTable reportTable = new JTable(model);
+
+        // Set some table properties for better display
+        reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        reportTable.setAutoCreateRowSorter(true); // Allow sorting by columns
+
+        // Add row selection listener to handle row clicks
+        reportTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Get selected row index
+                int selectedRow = reportTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    // Get the report ID from the selected row
+                    Integer reportId = (Integer) reportTable.getValueAt(selectedRow, 0);
+                    // Handle the display of report details based on the report ID
+                    showReportDetails(reportId);
+                }
+            }
+        });
+
+        return reportTable;
     }
 
-    private JTextField createTitleField() {
-        JTextField titleField = new JTextField();
-        titleField.setBorder(BorderFactory.createTitledBorder("Tytuł zgłoszenia"));
-        return titleField;
+    // Method to show the details of the selected report
+    private void showReportDetails(Integer reportId) {
+        Report report = reports.get(reportId);
+        if (report != null) {
+            // Create a panel for displaying details of the report
+            JPanel detailsPanel = new JPanel();
+            detailsPanel.setLayout(new BorderLayout());
+
+            // Title label
+            JLabel titleLabel = new JLabel("Title: " + report.getTitle());
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            detailsPanel.add(titleLabel, BorderLayout.NORTH);
+
+            // Description (JTextArea with scroll)
+            JTextArea descriptionField = new JTextArea(report.getDescription());
+            descriptionField.setWrapStyleWord(true);
+            descriptionField.setLineWrap(true);
+            descriptionField.setCaretPosition(0);
+            descriptionField.setEditable(false);
+
+            // Create JScrollPane for the description
+            JScrollPane scrollPane = createScrollPane(descriptionField);
+            detailsPanel.add(scrollPane, BorderLayout.CENTER);
+
+            // Show the details in a JOptionPane
+            JOptionPane.showMessageDialog(null, detailsPanel, "Report Details", JOptionPane.PLAIN_MESSAGE);
+        }
     }
 
-    private JTextArea createDescriptionField() {
-        JTextArea descriptionField = new JTextArea();
-        descriptionField.setBorder(BorderFactory.createTitledBorder("Opis sytuacji"));
-        descriptionField.setLineWrap(true);
-        descriptionField.setWrapStyleWord(true);
-        descriptionField.setRows(5);
-        descriptionField.setColumns(50);
-        return descriptionField;
-    }
-
+    // Method to create the scroll pane for JTextArea (to ensure it's non-editable and scrollable)
     private JScrollPane createScrollPane(JTextArea descriptionField) {
         JScrollPane scrollPane = new JScrollPane(descriptionField);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(750, 150));  // Preferred size
         scrollPane.setMinimumSize(new Dimension(500, 150)); // Minimum size
         return scrollPane;
-    }
-
-    private JButton createSendButton() {
-        JButton sendButton = new JButton("Wykonaj obowiązek obywatelski");
-        sendButton.setPreferredSize(new Dimension(120, 35));
-
-        sendButton.addActionListener(e -> {
-            // Akcja po kliknięciu przycisku
-            String title = titleField.getText();
-            String description = descriptionField.getText();
-            int userID = 11; // Main.usersDatabase.getUserId(Main.currentUser);
-
-            if (userID == -1) {
-                JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);
-            } else if (title.isEmpty() || description.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Wypełnienie pól to obowiązek każdego obywatela! Puste miejsca to tylko przestrzeń dla wrogów społeczeństwa!!", "ZaniedbanieObowiazkuException", JOptionPane.ERROR_MESSAGE);
-            } else {
-                Main.reportsDatabase.addItemToDatabase(new Report(userID, title, description));
-
-                JOptionPane.showMessageDialog(null, "Donos przyjęty, obywatelu! Twoje działania pomagają w budowaniu lepszego społeczeństwa. \nTytuł: " + title + "\n\n", "Donos złożony", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        return sendButton;
     }
 }
