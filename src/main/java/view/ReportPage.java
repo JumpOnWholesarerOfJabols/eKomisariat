@@ -117,7 +117,7 @@ public class ReportPage {
             // Akcja po kliknięciu przycisku
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = 11; // Main.usersDatabase.getUserId(Main.currentUser);
+            int userID = Main.usersDatabase.getUserId(Main.currentUser);
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);

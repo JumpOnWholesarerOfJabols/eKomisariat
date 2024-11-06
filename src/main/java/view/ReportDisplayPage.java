@@ -6,45 +6,40 @@ import main.java.model.Report;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReportDisplayPage {
 
-    // Mapa przechowująca raporty z ich identyfikatorami (Integer jako ID)
-    private final Map<Integer, Report> reports = new HashMap<>(Main.reportsDatabase.getAll());
+    private final Map<Integer, Report> baseReports = new HashMap<>(Main.reportsDatabase.getAll());
+    private final Map<Integer, Report> displayedReports = baseReports;
 
-    // Główna metoda uruchamiająca GUI
     public static void main(String[] args) {
         JFrame frame = new JFrame("Raporty");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 700);
+        frame.setSize(1200, 800);
 
-        // Create CardLayout and mainPanel (required by generateReportPage)
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
 
-        // Create ReportDisplayPage and add its JPanel to mainPanel
         ReportDisplayPage reportPage = new ReportDisplayPage();
         JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
         mainPanel.add(reportPanel, "reportPanel");
 
-        // Add mainPanel to frame and make it visible
         frame.add(mainPanel);
-        frame.setMinimumSize(new Dimension(600, 400)); // Prevent window from shrinking too much
+        frame.setMinimumSize(new Dimension(800, 600));
         frame.setVisible(true);
     }
 
-    // Generate the report page
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel reportPanel = createReportPanel();
         JPanel contentPanel = createContentPanel();
 
-        // Add the content panel to the main report panel
         reportPanel.add(contentPanel, new GridBagConstraints());
 
         return reportPanel;
@@ -53,16 +48,15 @@ public class ReportDisplayPage {
     private JPanel createReportPanel() {
         JPanel reportPanel = new JPanel(new GridBagLayout());
         reportPanel.setBackground(new Color(35, 78, 117));
-        reportPanel.setMinimumSize(new Dimension(600, 400));
+        reportPanel.setMinimumSize(new Dimension(800, 600));
         return reportPanel;
     }
 
     private JPanel createContentPanel() {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
-        contentPanel.setMinimumSize(new Dimension(500, 300));
+        contentPanel.setMinimumSize(new Dimension(700, 400));
 
-        // Create the table to display report details
         JTable reportTable = createReportTable();
         JScrollPane scrollPane = new JScrollPane(reportTable);
 
@@ -73,53 +67,68 @@ public class ReportDisplayPage {
     }
 
     private JTable createReportTable() {
-        // Column names for the table
-        String[] columnNames = {"ReportID", "UserId", "Title", "Assigned Worker", "Status", "Date"};
+        String[] columnNames = {"ID Zgłoszenia", "ID Obywatela", "Tytuł Meldunku", "ID Funkcjonariusza", "Status", "Data"};
 
-        // Create a DefaultTableModel to hold report data
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            // Disable cell editing
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        // Fill the table model with data from the reports map
-        for (Map.Entry<Integer, Report> entry : reports.entrySet()) {
+        for (Map.Entry<Integer, Report> entry : displayedReports.entrySet()) {
             Integer reportId = entry.getKey();
             Report report = entry.getValue();
 
             Object[] row = {
-                    reportId, // ReportID
-                    report.getUserId(), // UserId
-                    report.getTitle(), // Title
-                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()), // Assigned Worker
-                    report.getStatus(), // Status
-                    report.getDate() // Date
+                    reportId,
+                    report.getUserId(),
+                    report.getTitle(),
+                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
+                    report.getStatus(),
+                    report.getDate()
             };
 
             model.addRow(row);
         }
 
-        // Create the table with the model
         JTable reportTable = new JTable(model);
-
-        // Set some table properties for better display
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        reportTable.setAutoCreateRowSorter(true); // Allow sorting by columns
+        reportTable.setAutoCreateRowSorter(true);
+        reportTable.setRowHeight(35);
 
-        // Add row selection listener to handle row clicks
-        reportTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        reportTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        reportTable.getTableHeader().setBackground(new Color(35, 78, 117));
+        reportTable.getTableHeader().setForeground(Color.WHITE);
+        reportTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        reportTable.setGridColor(new Color(220, 220, 220));
+
+        reportTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                // Get selected row index
-                int selectedRow = reportTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    // Get the report ID from the selected row
-                    Integer reportId = (Integer) reportTable.getValueAt(selectedRow, 0);
-                    // Handle the display of report details based on the report ID
-                    showReportDetails(reportId);
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (row % 2 == 0) {
+                    c.setBackground(new Color(240, 240, 240));
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+                if (isSelected) {
+                    c.setBackground(new Color(100, 150, 200));
+                }
+                return c;
+            }
+        });
+
+        reportTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.getClickCount() == 2) { // Sprawdzenie, czy było podwójne kliknięcie
+                    int selectedRow = reportTable.rowAtPoint(e.getPoint());
+
+                    if (selectedRow != -1) {
+                        Integer reportId = (Integer) reportTable.getValueAt(selectedRow, 0);
+                        showReportDetails(reportId);
+                    }
                 }
             }
         });
@@ -127,41 +136,53 @@ public class ReportDisplayPage {
         return reportTable;
     }
 
-    // Method to show the details of the selected report
-    private void showReportDetails(Integer reportId) {
-        Report report = reports.get(reportId);
-        if (report != null) {
-            // Create a panel for displaying details of the report
-            JPanel detailsPanel = new JPanel();
-            detailsPanel.setLayout(new BorderLayout());
 
-            // Title label
-            JLabel titleLabel = new JLabel("Title: " + report.getTitle());
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+    private void showReportDetails(Integer reportId) {
+        Report report = displayedReports.get(reportId);
+        if (report != null) {
+            String details = String.format(
+                    "ID Zgłoszenia: %d | ID Obywatela: %s | Temat Meldunku: %s | ID Funkcjonariusza: %s | Status Zgłoszenia: %s | Data Zgłoszenia: %s",
+                    reportId,
+                    report.getUserId(),
+                    report.getTitle(),
+                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
+                    report.getStatus(),
+                    report.getDate()
+            );
+
+            JPanel detailsPanel = new JPanel(new BorderLayout());
+
+            JLabel titleLabel = new JLabel(details);
+            titleLabel.setFont(new Font("Arial", Font.PLAIN, 16));
             detailsPanel.add(titleLabel, BorderLayout.NORTH);
 
-            // Description (JTextArea with scroll)
+            JPanel descriptionPanel = new JPanel(new BorderLayout());
+            JLabel descriptionLabel = new JLabel("Opis:");
+            descriptionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            descriptionPanel.add(descriptionLabel, BorderLayout.NORTH);
+
             JTextArea descriptionField = new JTextArea(report.getDescription());
             descriptionField.setWrapStyleWord(true);
             descriptionField.setLineWrap(true);
             descriptionField.setCaretPosition(0);
             descriptionField.setEditable(false);
+            descriptionField.setFocusable(false);
+            descriptionField.setFont(new Font("Arial", Font.PLAIN, 14));
 
-            // Create JScrollPane for the description
             JScrollPane scrollPane = createScrollPane(descriptionField);
-            detailsPanel.add(scrollPane, BorderLayout.CENTER);
+            descriptionPanel.add(scrollPane, BorderLayout.CENTER);
 
-            // Show the details in a JOptionPane
+            detailsPanel.add(descriptionPanel, BorderLayout.CENTER);
+
             JOptionPane.showMessageDialog(null, detailsPanel, "Report Details", JOptionPane.PLAIN_MESSAGE);
         }
     }
 
-    // Method to create the scroll pane for JTextArea (to ensure it's non-editable and scrollable)
     private JScrollPane createScrollPane(JTextArea descriptionField) {
         JScrollPane scrollPane = new JScrollPane(descriptionField);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(750, 150));  // Preferred size
-        scrollPane.setMinimumSize(new Dimension(500, 150)); // Minimum size
+        scrollPane.setPreferredSize(new Dimension(900, 200));
+        scrollPane.setMinimumSize(new Dimension(700, 200));
         return scrollPane;
     }
 }
