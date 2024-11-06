@@ -1,6 +1,7 @@
 package main.java;
 
 import main.java.database.DatabaseOperations;
+import main.java.database.ReportsDatabase;
 import main.java.database.UsersDatabase;
 import main.java.model.User;
 import main.java.view.LoginPage;
@@ -13,6 +14,8 @@ import java.util.Map;
 
 public class Main {
     public static User currentUser;
+    public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
+    public static final UsersDatabase usersDatabase = new UsersDatabase();
 
     public static void main(String[] args) {
         //testy();

@@ -5,7 +5,7 @@ import main.java.model.Report;
 import java.time.LocalDate;
 import java.util.function.Predicate;
 
-public final class FilterMethods {
+public final class ReportsFilterMethods {
     public static Predicate<Report> filterUserId(int id) {
         return report -> report.getUserId() == id;
     }
