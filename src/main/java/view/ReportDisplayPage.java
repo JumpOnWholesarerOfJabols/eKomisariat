@@ -2,22 +2,44 @@ package main.java.view;
 
 import main.java.Main;
 import main.java.model.Report;
+import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class ReportDisplayPage {
 
-    private final Map<Integer, Report> baseReports = new HashMap<>(Main.reportsDatabase.getAll());
-    private final Map<Integer, Report> displayedReports = baseReports;
+    private final Map<Integer, Report> baseReports;
+    private Map<Integer, Report> displayedReports;
+    private final Predicate<Report> defaultFilter;
+
+    public ReportDisplayPage(Predicate<Report> defaultFilter) {
+        if (defaultFilter == null) {
+            this.defaultFilter = r -> true;
+        } else {
+            this.defaultFilter = defaultFilter;
+        }
+        baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
+        displayedReports = baseReports;
+    }
+
+    private Predicate<Report> getFilter(Predicate<Report> newFilter) {
+        return ReportsFilterMethods.combinedFilter(newFilter, defaultFilter);
+    }
+
+    public void changeDisplayedReports(Predicate<Report> newFilter) {
+        displayedReports = new HashMap<>(Main.reportsDatabase.getFiltered(newFilter));
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Raporty");
@@ -27,7 +49,7 @@ public class ReportDisplayPage {
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
 
-        ReportDisplayPage reportPage = new ReportDisplayPage();
+        ReportDisplayPage reportPage = new ReportDisplayPage(null);
         JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
         mainPanel.add(reportPanel, "reportPanel");
 
@@ -38,7 +60,7 @@ public class ReportDisplayPage {
 
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel reportPanel = createReportPanel();
-        JPanel contentPanel = createContentPanel();
+        JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
 
         reportPanel.add(contentPanel, new GridBagConstraints());
 
@@ -52,29 +74,47 @@ public class ReportDisplayPage {
         return reportPanel;
     }
 
-    private JPanel createContentPanel() {
+    private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
 
-        // Zwiększamy minimalny rozmiar panelu
         contentPanel.setMinimumSize(new Dimension(1000, 600));
-
-        // Dodanie wyśrodkowania komponentów w panelu
         contentPanel.setLayout(new BorderLayout(20, 20));
 
-        // Tworzenie tabeli raportów
         JTable reportTable = createReportTable();
         JScrollPane scrollPane = new JScrollPane(reportTable);
 
-        // Ustawiamy preferowany rozmiar i minimalny rozmiar dla JScrollPane
         scrollPane.setPreferredSize(new Dimension(900, 500));
         scrollPane.setMinimumSize(new Dimension(800, 400));
 
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JButton filterButton = new JButton("Filtry");
+        JButton backButton = new JButton("Powrót");
+
+        filterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFilterDialog();
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Powrót do poprzedniego ekranu.");
+            }
+        });
+
+        buttonPanel.add(filterButton);
+        buttonPanel.add(backButton);
+        contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+
         return contentPanel;
     }
-
 
     private JTable createReportTable() {
         String[] columnNames = {"ID Zgłoszenia", "ID Obywatela", "Tytuł Meldunku", "ID Funkcjonariusza", "Status", "Data"};
@@ -146,47 +186,18 @@ public class ReportDisplayPage {
         return reportTable;
     }
 
+    private void openFilterDialog() {
+        new FilterDialog(null, this, null).setVisible(true);
+    }
 
     private void showReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);
         if (report != null) {
-            String details = String.format(
-                    "ID Zgłoszenia: %d | ID Obywatela: %s | Temat Meldunku: %s | ID Funkcjonariusza: %s | Status Zgłoszenia: %s | Data Zgłoszenia: %s",
-                    reportId,
-                    report.getUserId(),
-                    report.getTitle(),
-                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
-                    report.getStatus(),
-                    report.getDate()
-            );
-
-            JPanel detailsPanel = new JPanel(new BorderLayout());
-
-            JLabel titleLabel = new JLabel(details);
-            titleLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            detailsPanel.add(titleLabel, BorderLayout.NORTH);
-
-            JPanel descriptionPanel = new JPanel(new BorderLayout());
-            JLabel descriptionLabel = new JLabel("Opis:");
-            descriptionLabel.setFont(new Font("Arial", Font.BOLD, 16));
-            descriptionPanel.add(descriptionLabel, BorderLayout.NORTH);
-
-            JTextArea descriptionField = new JTextArea(report.getDescription());
-            descriptionField.setWrapStyleWord(true);
-            descriptionField.setLineWrap(true);
-            descriptionField.setCaretPosition(0);
-            descriptionField.setEditable(false);
-            descriptionField.setFocusable(false);
-            descriptionField.setFont(new Font("Arial", Font.PLAIN, 14));
-
-            JScrollPane scrollPane = createScrollPane(descriptionField);
-            descriptionPanel.add(scrollPane, BorderLayout.CENTER);
-
-            detailsPanel.add(descriptionPanel, BorderLayout.CENTER);
-
-            JOptionPane.showMessageDialog(null, detailsPanel, "Report Details", JOptionPane.PLAIN_MESSAGE);
+            ReportDetailsDialog detailsDialog = new ReportDetailsDialog(null, reportId, report);
+            detailsDialog.setVisible(true);
         }
     }
+
 
     private JScrollPane createScrollPane(JTextArea descriptionField) {
         JScrollPane scrollPane = new JScrollPane(descriptionField);
