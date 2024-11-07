@@ -11,8 +11,11 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 public class RegisterPage {
-    String folderPath = "src/main/resources/users/";
-    DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
+    private final DatabaseOperations<User> usersDatabase;
+
+    public RegisterPage(DatabaseOperations<User> usersDatabase) {
+        this.usersDatabase = usersDatabase;
+    }
 
     public JPanel generateRegisterPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel registerPanel = new JPanel();
