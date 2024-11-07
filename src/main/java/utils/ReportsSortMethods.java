@@ -5,6 +5,8 @@ import main.java.model.Report;
 import java.util.Comparator;
 
 public final class ReportsSortMethods {
+    private ReportsSortMethods() {}
+
     public static Comparator<Report> sortByUserId() {
         return Comparator.comparingInt(Report::getUserId);
     }

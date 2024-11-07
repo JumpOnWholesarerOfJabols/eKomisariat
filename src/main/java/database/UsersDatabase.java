@@ -36,7 +36,7 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
     @Override
     public void exportDataToFile() {
-
+        usersFileManager.exportDatabase(data);
     }
 
     @Override
@@ -52,7 +52,8 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
     @Override
     public void removeItemFromDatabase(int id) {
-
+        data.remove(id);
+        usersFileManager.deleteItem(id);
     }
 
     @Override
@@ -62,12 +63,14 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
     @Override
     public void updateItemInDatabase(int id, User item) {
-
+        removeItemFromDatabase(id);
+        addItemToDatabase(id, item);
     }
 
     @Override
     public void clearDatabase() {
-
+        data.clear();
+        usersFileManager.clearDatabase();
     }
 
     @Override
@@ -77,12 +80,25 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
     @Override
     public LinkedHashMap<Integer, User> getSorted(Comparator<User> comparator) {
-        return null;
+        return data.entrySet().stream()
+                .sorted(((o1, o2) -> comparator.compare(o1.getValue(), o2.getValue())))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, //object -> object.getKey()
+                        Map.Entry::getValue, //object -> object.getValue()
+                        (o1, o2) -> o1,
+                        LinkedHashMap::new
+                ));
     }
 
     @Override
     public Map<Integer, User> getFiltered(Predicate<User> filter) {
-        return Map.of();
+        return data.entrySet().stream().filter(o -> filter.test(o.getValue()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, //object -> object.getKey()
+                        Map.Entry::getValue, //object -> object.getValue()
+                        (o1, o2) -> o1,
+                        HashMap::new
+                ));
     }
 
     @Override
@@ -101,10 +117,12 @@ public class UsersDatabase implements DatabaseOperations<User> {
     private static class UsersFileManager implements FileManager<User> {
         private final String folderPath;
         private final Path path;
+        private List<String> filesList;
 
         private UsersFileManager(String folderPath) {
             this.folderPath = folderPath;
             this.path = Paths.get(folderPath);
+            this.filesList = importFilesList(path);
         }
 
         private static int getIdFromFilePath(String filePath) {
@@ -119,7 +137,7 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
         @Override
         public Map<Integer, User> importDatabase() {
-            List<String> filesList = importFilesList(path);
+            this.filesList = importFilesList(path);
 
             return filesList.isEmpty() ? new HashMap<>() : filesList.stream().map(this::importItem)
                     .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
@@ -127,12 +145,15 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
         @Override
         public void exportDatabase(Map<Integer, User> data) {
-
+            data.forEach(this::exportItem);
         }
 
         @Override
         public void clearDatabase() {
+            this.filesList = new ArrayList<>(importFilesList(path));
 
+            filesList.stream().map(UsersDatabase.UsersFileManager::getIdFromFilePath).forEach(this::deleteItem);
+            filesList.clear();
         }
 
         @Override
@@ -169,7 +190,20 @@ public class UsersDatabase implements DatabaseOperations<User> {
 
         @Override
         public void deleteItem(int id) {
+            Path reportPath = Paths.get(getFilePathFromId(id));
 
+            if (!Files.exists(reportPath)) {
+                //logi - że brak pliku
+                return;
+            }
+
+            try {
+                Files.delete(reportPath);
+                filesList.remove(path.toString());
+                //logi ze usuwamy plik
+            } catch (IOException e) {
+                // logi ze jakiś blad
+            }
         }
     }
 }
