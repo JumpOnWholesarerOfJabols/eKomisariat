@@ -22,6 +22,10 @@ public class UsersDatabase implements DatabaseOperations<User> {
         data = importDataFromFile();
     }
 
+    public UsersDatabase() {
+        this("src/main/resources/users/");
+    }
+
     @Override
     public Map<Integer, User> importDataFromFile() {
         Map<Integer, User> map = usersFileManager.importDatabase();
@@ -100,6 +104,14 @@ public class UsersDatabase implements DatabaseOperations<User> {
     @Override
     public boolean checkDuplicate(int id) {
         return false;
+    }
+
+    public int getUserId(User user) {
+        return data.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), user))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(-1);
     }
 
     private static class UsersFileManager implements FileManager<User> {
