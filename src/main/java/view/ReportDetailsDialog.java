@@ -14,10 +14,9 @@ public class ReportDetailsDialog extends JDialog {
         setPreferredSize(new Dimension(900, 400));
         setMinimumSize(new Dimension(800, 300));
 
-        // Use the reportId passed into the constructor
         String details = String.format(
                 "ID Zgłoszenia: %d | ID Obywatela: %s | Temat Meldunku: %s | ID Funkcjonariusza: %s | Status Zgłoszenia: %s | Data Zgłoszenia: %s",
-                reportId, // Use the ID from the map
+                reportId,
                 report.getUserId(),
                 report.getTitle(),
                 (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),

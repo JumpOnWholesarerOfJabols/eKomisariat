@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -66,6 +68,17 @@ public class ReportDisplayPage {
         reportPanel = generateReportPage(cardLayout, mainPanel);
         mainPanel.add(reportPanel, "reportPanel");
 
+        reportTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = reportTable.rowAtPoint(e.getPoint());
+                if (row != -1 && e.getClickCount() == 2) {
+                    Integer reportId = (Integer) reportTable.getValueAt(row, 0);
+                    showReportDetails(reportId);
+                }
+            }
+        });
+
         frame.add(mainPanel);
         frame.setVisible(true);
     }
@@ -113,7 +126,7 @@ public class ReportDisplayPage {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Define back button action here
+
             }
         });
 
