@@ -3,16 +3,13 @@ import main.java.Main;
 import main.java.database.DatabaseOperations;
 import main.java.database.UsersDatabase;
 import main.java.model.User;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 public class LoginPage {
     String folderPath = "src/main/resources/users/";
@@ -31,7 +28,7 @@ public class LoginPage {
         headRow.setBackground(new Color(35,78,117));
         headRow.setBorder(BorderFactory.createEmptyBorder(30,0,0,0));
 
-        ImageIcon logo = new ImageIcon("C:\\Users\\kkosz\\Desktop\\p.png");
+        ImageIcon logo = new ImageIcon("src/main/resources/p.png");
         JLabel logoLabel = new JLabel(logo);
         logoLabel.setBorder(BorderFactory.createEmptyBorder(0,0,0,30));
         headRow.add(logoLabel);
@@ -128,33 +125,35 @@ public class LoginPage {
         loginPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Add ActionListener for loginButton to switch to newPage
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Switch to the new page when the login button is clicked
-                if(TryLogIn(emailField, passwordField)) {
-                    HomePage homePage = new HomePage();
-                    JPanel homePagePanel = homePage.generateHomePage(cardLayout, mainPanel);
-                    mainPanel.add(homePagePanel, "homePage");
-                    cardLayout.show(mainPanel, "homePage");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Podano błędne dane logowania!");
-                }
+        loginButton.addActionListener(e -> {
+            // Switch to the new page when the login button is clicked
+            if(tryLogIn(emailField, passwordField)) {
+                HomePage homePage = new HomePage();
+                JPanel homePagePanel = homePage.generateHomePage(cardLayout, mainPanel);
+                mainPanel.add(homePagePanel, "homePage");
+                cardLayout.show(mainPanel, "homePage");
+            } else {
+                JOptionPane.showMessageDialog(null, "Podano błędne dane logowania!");
             }
         });
 
         return loginPanel;
     }
 
-    private boolean TryLogIn(JTextField mainLoginField, JPasswordField passwordField) {
-        Map<Integer, User> users = usersDatabase.importDataFromFile();
-        for (User user : users.values()) {
-            if(Objects.equals(user.getEmail(), mainLoginField.getText()) && Arrays.equals(user.getPassword().toCharArray(), passwordField.getPassword())) {
-                Main.currentUser = user;
-                System.out.println("tu" + user);
-                return true;
-            }
+    private boolean tryLogIn(JTextField mainLoginField, JPasswordField passwordField) {
+        Optional<User> userOptional = usersDatabase
+                .getFiltered(UsersFilterMethods.filterLoginField(mainLoginField.getText()))
+                .values()
+                .stream()
+                .findFirst();
+
+        if(userOptional.isPresent() && userOptional.get().getPassword().equals(String.valueOf(passwordField.getPassword()))) {
+            Main.currentUser = userOptional.get();
+            System.out.println("tu" + userOptional.get());
+            return true;
+
         }
+
         return false;
     }
 }
