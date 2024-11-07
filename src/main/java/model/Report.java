@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Report implements Serializable {
 
-    public enum reportStatus{OPEN,ASSIGNED,CLOSED}
+    public enum reportStatus{OPEN,ASSIGNED, NEW, COMPLETED, CLOSED}
 
     private final int userId;
     private String title;
