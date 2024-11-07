@@ -28,11 +28,10 @@ public class LoginPage {
         headRow.setBackground(new Color(35,78,117));
         headRow.setBorder(BorderFactory.createEmptyBorder(30,0,0,0));
 
-        //Tymczasowo zakomentowane bo nie ma tego pliczku z logiem na gicie ://
-        //ImageIcon logo = new ImageIcon(Objects.requireNonNull(getClass().getResource("resources/logo.png")));
-        //JLabel logoLabel = new JLabel(logo);
-        //logoLabel.setBorder(BorderFactory.createEmptyBorder(0,0,0,30));
-        //headRow.add(logoLabel);
+        ImageIcon logo = new ImageIcon("src/main/resources/p.png");
+        JLabel logoLabel = new JLabel(logo);
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(0,0,0,30));
+        headRow.add(logoLabel);
 
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(new Color(35,78,117));
