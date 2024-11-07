@@ -15,8 +15,9 @@ import java.util.Map;
 
 public class Main {
     public static User currentUser;
+    public static final String folderPath = "src/main/resources/users/";
     public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
-    public static final UsersDatabase usersDatabase = new UsersDatabase();
+    public static final DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
 
     public static void main(String[] args) {
         testy();
@@ -30,10 +31,10 @@ public class Main {
         f.add(mainPanel);
 
         // LOGIN PAGE PANEL
-        LoginPage loginPage = new LoginPage();
+        LoginPage loginPage = new LoginPage(usersDatabase);
         JPanel loginPanel = loginPage.generateLoginPage(cardLayout, mainPanel);
 
-        RegisterPage registerPage = new RegisterPage();
+        RegisterPage registerPage = new RegisterPage(usersDatabase);
         JPanel registerPanel = registerPage.generateRegisterPage(cardLayout, mainPanel);
       
         mainPanel.add(loginPanel, "loginPage");

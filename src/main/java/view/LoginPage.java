@@ -12,8 +12,11 @@ import java.awt.event.MouseEvent;
 import java.util.Optional;
 
 public class LoginPage {
-    String folderPath = "src/main/resources/users/";
-    DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
+    private final DatabaseOperations<User> usersDatabase;
+
+    public LoginPage(DatabaseOperations<User> usersDatabase) {
+        this.usersDatabase = usersDatabase;
+    }
 
     public JPanel generateLoginPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel loginPanel = new JPanel();
