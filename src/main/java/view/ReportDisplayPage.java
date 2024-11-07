@@ -5,13 +5,9 @@ import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -22,6 +18,15 @@ public class ReportDisplayPage {
     private Map<Integer, Report> displayedReports;
     private final Predicate<Report> defaultFilter;
     private Predicate<Report> currentFilter;
+
+    private JFrame frame;
+    private JPanel mainPanel;
+    private JPanel reportPanel;
+    private JTable reportTable;
+    private JScrollPane scrollPane;
+    private JPanel buttonPanel;
+    private JButton filterButton;
+    private JButton backButton;
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         if (defaultFilter == null) {
@@ -39,31 +44,36 @@ public class ReportDisplayPage {
 
     public void changeDisplayedReports(Predicate<Report> newFilter) {
         displayedReports = new HashMap<>(Main.reportsDatabase.getFiltered(newFilter));
+        updateReportTable();
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Raporty");
+        SwingUtilities.invokeLater(() -> {
+            ReportDisplayPage reportPage = new ReportDisplayPage(null);
+            reportPage.initializeGUI();
+        });
+    }
+
+    private void initializeGUI() {
+        frame = new JFrame("Raporty");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 800);
+        frame.setMinimumSize(new Dimension(800, 600));
 
         CardLayout cardLayout = new CardLayout();
-        JPanel mainPanel = new JPanel(cardLayout);
+        mainPanel = new JPanel(cardLayout);
 
-        ReportDisplayPage reportPage = new ReportDisplayPage(null);
-        JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
+        reportPanel = generateReportPage(cardLayout, mainPanel);
         mainPanel.add(reportPanel, "reportPanel");
 
         frame.add(mainPanel);
-        frame.setMinimumSize(new Dimension(800, 600));
         frame.setVisible(true);
     }
 
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel reportPanel = createReportPanel();
         JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
-
+        reportPanel = createReportPanel();
         reportPanel.add(contentPanel, new GridBagConstraints());
-
         return reportPanel;
     }
 
@@ -77,23 +87,21 @@ public class ReportDisplayPage {
     private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
-
         contentPanel.setMinimumSize(new Dimension(1000, 600));
         contentPanel.setLayout(new BorderLayout(20, 20));
 
-        JTable reportTable = createReportTable();
-        JScrollPane scrollPane = new JScrollPane(reportTable);
-
+        reportTable = createReportTable();
+        scrollPane = new JScrollPane(reportTable);
         scrollPane.setPreferredSize(new Dimension(900, 500));
         scrollPane.setMinimumSize(new Dimension(800, 400));
 
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JButton filterButton = new JButton("Filtry");
-        JButton backButton = new JButton("Powrót");
+        filterButton = new JButton("Filtry");
+        backButton = new JButton("Powrót");
 
         filterButton.addActionListener(new ActionListener() {
             @Override
@@ -105,7 +113,7 @@ public class ReportDisplayPage {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Powrót do poprzedniego ekranu.");
+                // Define back button action here
             }
         });
 
@@ -117,82 +125,26 @@ public class ReportDisplayPage {
     }
 
     private JTable createReportTable() {
-        String[] columnNames = {"ID Zgłoszenia", "ID Obywatela", "Tytuł Meldunku", "ID Funkcjonariusza", "Status", "Data"};
+        ReportTable reportTableCreator = new ReportTable(displayedReports);
+        return reportTableCreator.createTable();
+    }
 
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        for (Map.Entry<Integer, Report> entry : displayedReports.entrySet()) {
-            Integer reportId = entry.getKey();
-            Report report = entry.getValue();
-
-            Object[] row = {
-                    reportId,
-                    report.getUserId(),
-                    report.getTitle(),
-                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
-                    report.getStatus(),
-                    report.getDate()
-            };
-
-            model.addRow(row);
-        }
-
-        JTable reportTable = new JTable(model);
-        reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        reportTable.setAutoCreateRowSorter(true);
-        reportTable.setRowHeight(35);
-
-        reportTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        reportTable.getTableHeader().setBackground(new Color(35, 78, 117));
-        reportTable.getTableHeader().setForeground(Color.WHITE);
-        reportTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        reportTable.setGridColor(new Color(220, 220, 220));
-
-        reportTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (row % 2 == 0) {
-                    c.setBackground(new Color(240, 240, 240));
-                } else {
-                    c.setBackground(Color.WHITE);
-                }
-                if (isSelected) {
-                    c.setBackground(new Color(100, 150, 200));
-                }
-                return c;
-            }
-        });
-
-        reportTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int selectedRow = reportTable.rowAtPoint(e.getPoint());
-
-                    if (selectedRow != -1) {
-                        Integer reportId = (Integer) reportTable.getValueAt(selectedRow, 0);
-                        showReportDetails(reportId);
-                    }
-                }
-            }
-        });
-
-        return reportTable;
+    private void updateReportTable() {
+        reportTable.setModel(new ReportTable(displayedReports).createTable().getModel());
     }
 
     private void openFilterDialog() {
         FilterDialog filterDialog = new FilterDialog(null, this, null);
+
         filterDialog.setVisible(true);
 
-        currentFilter = filterDialog.getFilter();
-        currentFilter = getFilter(currentFilter);
-
+        try {
+            currentFilter = filterDialog.getFilter();
+            currentFilter = getFilter(currentFilter);
+            changeDisplayedReports(currentFilter);
+        } catch (NullPointerException e){
+            System.out.println("Nie naciskaj krzyżyka bo nie wiem jak to naprawić aby dzialalo ladnie :DD");
+        }
     }
 
     private void showReportDetails(Integer reportId) {
