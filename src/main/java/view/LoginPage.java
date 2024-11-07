@@ -152,6 +152,7 @@ public class LoginPage {
             Main.currentUser = userOptional.get();
             System.out.println("tu" + userOptional.get());
             return true;
+
         }
 
         return false;
