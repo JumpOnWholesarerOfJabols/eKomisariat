@@ -55,6 +55,12 @@ public class RegisterPage {
             @Override
             public void mouseClicked(MouseEvent e) {
                 usersDatabase.addItemToDatabase(new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword())));
+                cardLayout.show(mainPanel, "loginPage");
+                nameField.setText("");
+                surnameField.setText("");
+                passwordField.setText("");
+                emailField.setText("");
+                JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
             }
         });
 
@@ -65,6 +71,7 @@ public class RegisterPage {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 cardLayout.show(mainPanel, "loginPage");
             }
 
