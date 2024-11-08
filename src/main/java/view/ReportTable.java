@@ -1,5 +1,6 @@
 package main.java.view;
 
+import main.java.Main;
 import main.java.model.Report;
 
 import javax.swing.*;
@@ -11,9 +12,11 @@ import java.util.Map;
 public class ReportTable {
 
     private final Map<Integer, Report> displayedReports;
+    private final boolean editEnabled;
 
-    public ReportTable(Map<Integer, Report> displayedReports) {
+    public ReportTable(Map<Integer, Report> displayedReports, boolean editEnabled) {
         this.displayedReports = displayedReports;
+        this.editEnabled = editEnabled;
     }
 
     public JTable createTable() {
@@ -22,9 +25,11 @@ public class ReportTable {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return editEnabled && column == 3;
             }
         };
+
+        JComboBox<Integer> comboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5});
 
         for (Map.Entry<Integer, Report> entry : displayedReports.entrySet()) {
             Integer reportId = entry.getKey();
@@ -34,7 +39,7 @@ public class ReportTable {
                     reportId,
                     report.getUserId(),
                     report.getTitle(),
-                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
+                    report.getAssignmentWorkerID(),
                     report.getStatus(),
                     report.getDate()
             };
@@ -46,6 +51,8 @@ public class ReportTable {
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         reportTable.setAutoCreateRowSorter(true);
         reportTable.setRowHeight(35);
+
+        reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(comboBox));
 
         reportTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         reportTable.getTableHeader().setBackground(new Color(35, 78, 117));
@@ -67,6 +74,14 @@ public class ReportTable {
                 }
                 return c;
             }
+        });
+
+        comboBox.addActionListener(e -> {
+            int id = Integer.parseInt(String.valueOf(reportTable.getModel().getValueAt(reportTable.getSelectedRow(), 0)));
+            Report report = displayedReports.get(id);
+            report.setAssignmentWorkerID(Integer.parseInt(String.valueOf(comboBox.getSelectedItem())));
+
+            Main.reportsDatabase.updateItemInDatabase(id, report);
         });
 
         return reportTable;

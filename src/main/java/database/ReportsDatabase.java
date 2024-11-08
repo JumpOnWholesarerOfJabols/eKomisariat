@@ -135,7 +135,7 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
 
         @Override
         public Map<Integer, Report> importDatabase() {
-            this.filesList = importFilesList(path);
+            this.filesList = new ArrayList<>(importFilesList(path));
 
             return filesList.isEmpty() ? new HashMap<>() : filesList.stream().map(this::importItem)
                     .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));

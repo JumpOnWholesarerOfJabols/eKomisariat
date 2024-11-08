@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 
 public class ReportDisplayPage {
 
+    private final boolean editEnabled;
     private final Map<Integer, Report> baseReports;
     private Map<Integer, Report> displayedReports;
     private final Predicate<Report> defaultFilter;
@@ -33,8 +34,10 @@ public class ReportDisplayPage {
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         if (defaultFilter == null) {
             this.defaultFilter = r -> true;
+            editEnabled = true;
         } else {
             this.defaultFilter = defaultFilter;
+            editEnabled = false;
         }
         baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
         displayedReports = baseReports;
@@ -138,12 +141,12 @@ public class ReportDisplayPage {
     }
 
     private JTable createReportTable() {
-        ReportTable reportTableCreator = new ReportTable(displayedReports);
+        ReportTable reportTableCreator = new ReportTable(displayedReports, editEnabled);
         return reportTableCreator.createTable();
     }
 
     private void updateReportTable() {
-        reportTable.setModel(new ReportTable(displayedReports).createTable().getModel());
+        reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
     }
 
     private void openFilterDialog() {
