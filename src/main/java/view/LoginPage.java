@@ -7,6 +7,8 @@ import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Optional;
@@ -126,6 +128,15 @@ public class LoginPage {
         centerPanel.add(loginRow, BorderLayout.CENTER);
 
         loginPanel.add(centerPanel, BorderLayout.CENTER);
+
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    loginButton.doClick();
+                }
+            }
+        });
 
         // Add ActionListener for loginButton to switch to newPage
         loginButton.addActionListener(e -> {
