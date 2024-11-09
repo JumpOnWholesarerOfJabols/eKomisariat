@@ -49,24 +49,15 @@ public class ReportDisplayPage {
         updateReportTable();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ReportDisplayPage reportPage = new ReportDisplayPage(null);
-            reportPage.initializeGUI();
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            ReportDisplayPage reportPage = new ReportDisplayPage(null);
+//            reportPage.initializeGUI();
+//        });
+//    }
 
-    private void initializeGUI() {
-        frame = new JFrame("Raporty");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 800);
-        frame.setMinimumSize(new Dimension(800, 600));
-
-        CardLayout cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-
+    public JPanel initializeGUI(CardLayout cardLayout, JPanel mainPanel) {
         reportPanel = generateReportPage(cardLayout, mainPanel);
-        mainPanel.add(reportPanel, "reportPanel");
 
         reportTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -80,14 +71,15 @@ public class ReportDisplayPage {
         });
 
         frame.add(mainPanel);
-        frame.setVisible(true);
+
+        return reportPanel;
     }
 
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
         reportPanel = createReportPanel();
         reportPanel.add(contentPanel, new GridBagConstraints());
-        return reportPanel;
+        return contentPanel;
     }
 
     private JPanel createReportPanel() {
