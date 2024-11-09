@@ -31,7 +31,7 @@ public class HomePage extends AbstractPage{
         rootPanel.add(logoutButton);
 
         ReportPage reportPage = new ReportPage();
-        mainPanel.add("reportPage", reportPage.generatePage(cardLayout, mainPanel));
+        mainPanel.add(reportPage.generatePage(cardLayout, mainPanel), "reportPage");
 
         JButton reportButton = new JButton("Nowy donos");
         reportButton.addActionListener(e -> cardLayout.show(mainPanel, "reportPage"));

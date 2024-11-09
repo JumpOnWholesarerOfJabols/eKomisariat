@@ -13,14 +13,17 @@ public class ReportPage extends AbstractPage{
     private JScrollPane scrollPane;
 
     // Generate the report page
-    public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        rootPanel.setLayout(new CardLayout());
+
         JPanel reportPanel = createReportPanel();
-        JPanel contentPanel = createContentPanel();
+        JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
 
         // Add the content panel to the main report panel
         reportPanel.add(contentPanel, new GridBagConstraints());
+        rootPanel.add(reportPanel, "reportForm");
 
-        return reportPanel;
+        return rootPanel;
     }
 
     private JPanel createReportPanel() {
@@ -30,7 +33,7 @@ public class ReportPage extends AbstractPage{
         return reportPanel;
     }
 
-    private JPanel createContentPanel() {
+    private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(new Color(240, 240, 240));
         contentPanel.setMinimumSize(new Dimension(500, 300));
@@ -48,6 +51,8 @@ public class ReportPage extends AbstractPage{
         sendButton = createSendButton();
         gbc.gridy = 2;
         contentPanel.add(sendButton, gbc);
+
+        contentPanel.add(createBackButton(cardLayout, mainPanel), gbc);
 
         return contentPanel;
     }
@@ -84,6 +89,14 @@ public class ReportPage extends AbstractPage{
         return scrollPane;
     }
 
+    private JButton createBackButton(CardLayout cardLayout, JPanel mainPanel) {
+        JButton backButton = new JButton("Wykonaj obowiązek obywatelski");
+        backButton.setText("Powrót");
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
+
+        return backButton;
+    }
+
     private JButton createSendButton() {
         JButton sendButton = new JButton("Wykonaj obowiązek obywatelski");
         sendButton.setPreferredSize(new Dimension(120, 35));
@@ -105,19 +118,5 @@ public class ReportPage extends AbstractPage{
         });
 
         return sendButton;
-    }
-
-    @Override
-    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
-        // Create CardLayout and mainPanel (required by generateReportPage)
-        CardLayout rootCardLayout = new CardLayout();
-        rootPanel.setLayout(rootCardLayout);
-
-        // Create ReportPage and add its JPanel to mainPanel
-        ReportPage reportPage = new ReportPage();
-        JPanel reportPanel = reportPage.generateReportPage(rootCardLayout, rootPanel);
-        rootPanel.add(reportPanel, "reportPanel");
-
-        return rootPanel;
     }
 }
