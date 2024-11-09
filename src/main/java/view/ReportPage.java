@@ -6,33 +6,11 @@ import main.java.model.Report;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReportPage {
-
+public class ReportPage extends AbstractPage{
     private JTextField titleField;
     private JTextArea descriptionField;
     private JButton sendButton;
     private JScrollPane scrollPane;
-
-    // testowanie
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Report Page Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 700);
-
-        // Create CardLayout and mainPanel (required by generateReportPage)
-        CardLayout cardLayout = new CardLayout();
-        JPanel mainPanel = new JPanel(cardLayout);
-
-        // Create ReportPage and add its JPanel to mainPanel
-        ReportPage reportPage = new ReportPage();
-        JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
-        mainPanel.add(reportPanel, "reportPanel");
-
-        // Add mainPanel to frame and make it visible
-        frame.add(mainPanel);
-        frame.setMinimumSize(new Dimension(600, 400)); // Prevent window from shrinking too much
-        frame.setVisible(true);
-    }
 
     // Generate the report page
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
@@ -113,7 +91,7 @@ public class ReportPage {
         sendButton.addActionListener(e -> {
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = 2137 ;//Main.usersDatabase.getUserId(Main.currentUser);
+            int userID = Main.usersDatabase.getUserId(Main.currentUser);
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);
@@ -127,5 +105,19 @@ public class ReportPage {
         });
 
         return sendButton;
+    }
+
+    @Override
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        // Create CardLayout and mainPanel (required by generateReportPage)
+        CardLayout rootCardLayout = new CardLayout();
+        rootPanel.setLayout(rootCardLayout);
+
+        // Create ReportPage and add its JPanel to mainPanel
+        ReportPage reportPage = new ReportPage();
+        JPanel reportPanel = reportPage.generateReportPage(rootCardLayout, rootPanel);
+        rootPanel.add(reportPanel, "reportPanel");
+
+        return rootPanel;
     }
 }
