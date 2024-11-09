@@ -4,10 +4,7 @@ import main.java.database.DatabaseOperations;
 import main.java.database.ReportsDatabase;
 import main.java.database.UsersDatabase;
 import main.java.model.User;
-import main.java.view.HomePage;
-import main.java.view.LoginPage;
-import main.java.view.RegisterPage;
-import main.java.view.ReportPage;
+import main.java.view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +14,7 @@ public class Main {
     public static User currentUser;
     public static final String folderPath = "src/main/resources/users/";
     public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
-    public static final DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
+    public static final UsersDatabase usersDatabase = new UsersDatabase(folderPath);
 
     public static void main(String[] args) {
         testy();
