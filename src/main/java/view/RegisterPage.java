@@ -13,6 +13,13 @@ import java.awt.event.MouseEvent;
 public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
 
+    private JTextField nameField;
+    private JTextField surnameField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
+    private JButton registerButton;
+    private JLabel passwordInfoLabel;
+
     public RegisterPage(DatabaseOperations<User> usersDatabase) {
         super();
         this.usersDatabase = usersDatabase;
@@ -38,19 +45,21 @@ public class RegisterPage extends AbstractPage{
         titleField.setFont(new Font("Arial", Font.BOLD, 28));
         titleField.setForeground(Color.white);
 
-        JTextField nameField = new JTextField();
+        nameField = new JTextField();
         nameField.setBorder(BorderFactory.createTitledBorder("Imię"));
 
-        JTextField surnameField = new JTextField();
+        surnameField = new JTextField();
         surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
 
-        JTextField emailField = new JTextField();
+        emailField = new JTextField();
         emailField.setBorder(BorderFactory.createTitledBorder("Email"));
 
-        JPasswordField passwordField = new JPasswordField();
+        passwordField = new JPasswordField();
         passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
 
-        JButton registerButton = new JButton("Zarejestruj się");
+        passwordInfoLabel = new JLabel("Hasło musi zawierać minimum 6 znaków, jedną literę i jedną cyfre");
+
+        registerButton = new JButton("Zarejestruj się");
         registerButton.setPreferredSize(new Dimension(120, 35));
 
         passwordField.addKeyListener(new KeyAdapter() {
@@ -65,7 +74,18 @@ public class RegisterPage extends AbstractPage{
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                usersDatabase.addItemToDatabase(new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword())));
+                if(isDataValid()) {
+                    usersDatabase.addItemToDatabase(new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword())));
+                    cardLayout.show(mainPanel, "loginPage");
+                    nameField.setText("");
+                    surnameField.setText("");
+                    passwordField.setText("");
+                    emailField.setText("");
+                    JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
+                }
+
             }
         });
 
@@ -92,15 +112,78 @@ public class RegisterPage extends AbstractPage{
         gbc.gridy = 4;
         mainRegisterPanel.add(passwordField, gbc);
         gbc.gridy = 5;
+        mainRegisterPanel.add(passwordInfoLabel,gbc);
+        gbc.gridy = 6;
         gbc.fill = GridBagConstraints.VERTICAL;
         gbc.anchor = GridBagConstraints.EAST;
         mainRegisterPanel.add(registerButton, gbc);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         mainRegisterPanel.add(loginLabel, gbc);
         rootPanel.add(mainRegisterPanel);
 
         return rootPanel;
+    }
+
+    private boolean isDataValid() {
+        boolean isValid = isNameValid() && isSurnameValid() && isEmailValid() && isPasswordValid();
+
+        if(!isNameValid()) {
+            nameField.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.RED),
+                    "Imię"
+            ));
+        } else {
+            nameField.setBorder(BorderFactory.createTitledBorder("Imię"));
+        }
+
+        if(!isSurnameValid()) {
+            surnameField.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.RED),
+                    "Nazwisko"
+            ));
+        } else {
+            surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
+        }
+
+        if(!isEmailValid()) {
+            emailField.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.RED),
+                    "Email"
+            ));
+        } else {
+            emailField.setBorder(BorderFactory.createTitledBorder("Email"));
+        }
+
+        if(!isPasswordValid()) {
+            passwordField.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.RED),
+                    "Hasło"
+            ));
+        } else {
+            passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
+        }
+
+        return isValid;
+    }
+
+    private boolean isNameValid() {
+        String text = nameField.getText();
+        return text != null && text.matches("[A-Z].{2,}");
+    }
+    private boolean isSurnameValid() {
+        String text = surnameField.getText();
+        return text != null && text.matches("[A-Z].{2,}");
+    }
+
+    private boolean isPasswordValid() {
+        String password = new String(passwordField.getPassword());
+        return password.matches("^(?=.*[A-Z])(?=.*\\d).{6,}$");
+    }
+
+    private boolean isEmailValid() {
+        String email = new String(emailField.getText());
+        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
     }
 }
 
