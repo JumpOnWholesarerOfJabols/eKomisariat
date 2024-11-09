@@ -17,8 +17,7 @@ public class Main {
     public static User currentUser;
     public static final String folderPath = "src/main/resources/users/";
     public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
-    public static final DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
-
+    public static final UsersDatabase usersDatabase = new UsersDatabase();
     public static void main(String[] args) {
         testy();
         JFrame f = new JFrame("eKomisariat");
@@ -32,10 +31,10 @@ public class Main {
 
         // LOGIN PAGE PANEL
         LoginPage loginPage = new LoginPage(usersDatabase);
-        JPanel loginPanel = loginPage.generateLoginPage(cardLayout, mainPanel);
+        JPanel loginPanel = loginPage.generatePage(cardLayout, mainPanel);
 
         RegisterPage registerPage = new RegisterPage(usersDatabase);
-        JPanel registerPanel = registerPage.generateRegisterPage(cardLayout, mainPanel);
+        JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
       
         mainPanel.add(loginPanel, "loginPage");
         mainPanel.add(registerPanel, "registerPage");

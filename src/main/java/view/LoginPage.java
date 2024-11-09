@@ -1,7 +1,6 @@
 package main.java.view;
 import main.java.Main;
 import main.java.database.DatabaseOperations;
-import main.java.database.UsersDatabase;
 import main.java.model.User;
 import main.java.utils.UsersFilterMethods;
 
@@ -13,24 +12,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Optional;
 
-public class LoginPage {
+public class LoginPage extends AbstractPage {
     private final DatabaseOperations<User> usersDatabase;
 
     public LoginPage(DatabaseOperations<User> usersDatabase) {
+        super();
         this.usersDatabase = usersDatabase;
     }
 
-    public JPanel generateLoginPage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel loginPanel = new JPanel();
-        loginPanel.setLayout(new BorderLayout());
-        loginPanel.setBackground(new Color(35,78,117));
-        loginPanel.setBorder(BorderFactory.createEmptyBorder(60, 145, 60, 145));
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        rootPanel.setLayout(new BorderLayout());
 
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
 
         JPanel headRow = new JPanel(new FlowLayout());
-        headRow.setBackground(new Color(35,78,117));
+        headRow.setBackground(BG_COLOR);
         headRow.setBorder(BorderFactory.createEmptyBorder(30,0,0,0));
 
         ImageIcon logo = new ImageIcon("src/main/resources/p.png");
@@ -39,7 +36,7 @@ public class LoginPage {
         headRow.add(logoLabel);
 
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(35,78,117));
+        headerPanel.setBackground(BG_COLOR);
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
         // Create header title label
@@ -72,7 +69,7 @@ public class LoginPage {
 
         JPanel loginRow = new JPanel();
         loginRow.setLayout(new BorderLayout());
-        loginRow.setBackground(new Color(35,78,117));
+        loginRow.setBackground(BG_COLOR);
         loginRow.setBorder(BorderFactory.createEmptyBorder(75,50,75,50));
 
         JPanel mainLoginField = new JPanel();
@@ -127,7 +124,7 @@ public class LoginPage {
         centerPanel.add(headRow, BorderLayout.NORTH);
         centerPanel.add(loginRow, BorderLayout.CENTER);
 
-        loginPanel.add(centerPanel, BorderLayout.CENTER);
+        rootPanel.add(centerPanel, BorderLayout.CENTER);
 
         passwordField.addKeyListener(new KeyAdapter() {
             @Override
@@ -143,7 +140,7 @@ public class LoginPage {
             // Switch to the new page when the login button is clicked
             if(tryLogIn(emailField, passwordField)) {
                 HomePage homePage = new HomePage();
-                JPanel homePagePanel = homePage.generateHomePage(cardLayout, mainPanel);
+                JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(homePagePanel, "homePage");
                 cardLayout.show(mainPanel, "homePage");
             } else {
@@ -151,7 +148,7 @@ public class LoginPage {
             }
         });
 
-        return loginPanel;
+        return rootPanel;
     }
 
     private boolean tryLogIn(JTextField mainLoginField, JPasswordField passwordField) {

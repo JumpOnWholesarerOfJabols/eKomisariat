@@ -1,7 +1,6 @@
 package main.java.view;
 
 import main.java.database.DatabaseOperations;
-import main.java.database.UsersDatabase;
 import main.java.model.User;
 
 import javax.swing.*;
@@ -10,20 +9,17 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 
-public class RegisterPage {
+public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
 
     public RegisterPage(DatabaseOperations<User> usersDatabase) {
+        super();
         this.usersDatabase = usersDatabase;
     }
 
-    public JPanel generateRegisterPage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel registerPanel = new JPanel();
-        registerPanel.setLayout(new GridBagLayout());
-        registerPanel.setBackground(new Color(35,78,117));
-        registerPanel.setBorder(BorderFactory.createEmptyBorder(60, 145, 60, 145));
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        rootPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -102,9 +98,9 @@ public class RegisterPage {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridy = 6;
         mainRegisterPanel.add(loginLabel, gbc);
-        registerPanel.add(mainRegisterPanel);
+        rootPanel.add(mainRegisterPanel);
 
-        return registerPanel;
+        return rootPanel;
     }
 }
 

@@ -14,16 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class ReportDisplayPage {
-
-    private final boolean editEnabled;
+public class ReportDisplayPage extends AbstractTablePage<Report> {
     private final Map<Integer, Report> baseReports;
     private Map<Integer, Report> displayedReports;
-    private final Predicate<Report> defaultFilter;
-    private Predicate<Report> currentFilter;
 
-    private JFrame frame;
-    private JPanel mainPanel;
     private JPanel reportPanel;
     private JTable reportTable;
     private JScrollPane scrollPane;
@@ -32,13 +26,7 @@ public class ReportDisplayPage {
     private JButton backButton;
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
-        if (defaultFilter == null) {
-            this.defaultFilter = r -> true;
-            editEnabled = true;
-        } else {
-            this.defaultFilter = defaultFilter;
-            editEnabled = false;
-        }
+        super(defaultFilter);
         baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
         displayedReports = baseReports;
     }
@@ -52,24 +40,13 @@ public class ReportDisplayPage {
         updateReportTable();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ReportDisplayPage reportPage = new ReportDisplayPage(null);
-            reportPage.initializeGUI();
-        });
-    }
-
-    private void initializeGUI() {
-        frame = new JFrame("Raporty");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 800);
-        frame.setMinimumSize(new Dimension(800, 600));
-
-        CardLayout cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+    @Override
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        CardLayout rootCardLayout = new CardLayout();
+        rootPanel.setLayout(rootCardLayout);
 
         reportPanel = generateReportPage(cardLayout, mainPanel);
-        mainPanel.add(reportPanel, "reportPanel");
+        rootPanel.add(reportPanel, "reportPanel");
 
         reportTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -81,9 +58,7 @@ public class ReportDisplayPage {
                 }
             }
         });
-
-        frame.add(mainPanel);
-        frame.setVisible(true);
+        return rootPanel;
     }
 
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
@@ -119,19 +94,9 @@ public class ReportDisplayPage {
         filterButton = new JButton("Filtry");
         backButton = new JButton("Powrót");
 
-        filterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openFilterDialog();
-            }
-        });
+        filterButton.addActionListener(e -> openFilterDialog());
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
 
         buttonPanel.add(filterButton);
         buttonPanel.add(backButton);

@@ -1,32 +1,47 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.model.Policeman;
+import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class HomePage {
-
-    public JPanel generateHomePage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel newPagePanel = new JPanel();
-        newPagePanel.setLayout(new FlowLayout());
-        newPagePanel.setBackground(new Color(50, 150, 200));
+public class HomePage extends AbstractPage{
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        System.out.println("Logged in as user: " + Main.usersDatabase.getUserId(Main.currentUser));
+        rootPanel.setLayout(new FlowLayout());
+        rootPanel.setBackground(new Color(50, 150, 200));
 
         String welcome = "Witaj ";
         if(Main.currentUser != null) {
             welcome += Main.currentUser.getName();
+
+            //if(Main.currentUser instanceof Policeman){
+                generateReportsButton(cardLayout, mainPanel);
+            //}
         }
         JLabel welcomeLabel = new JLabel(welcome);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
         welcomeLabel.setForeground(Color.WHITE);
-        newPagePanel.add(welcomeLabel);
+        rootPanel.add(welcomeLabel);
 
         JButton logoutButton = new JButton("Wyloguj");
-        logoutButton.addActionListener(e -> {
-            cardLayout.show(mainPanel, "loginPage");
-        });
-        newPagePanel.add(logoutButton);
+        logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
+        rootPanel.add(logoutButton);
 
-        return newPagePanel;
+        return rootPanel;
+    }
+
+    private void generateReportsButton(CardLayout cardLayout, JPanel mainPanel){
+        ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterReportAssigmentWorker(Main.usersDatabase.getUserId(Main.currentUser)));
+
+        //ReportDisplayPage reportDisplayPage = new ReportDisplayPage(null);
+        mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
+
+        JButton reportsButton = new JButton("Wyświetl listę raportów");
+        reportsButton.addActionListener(e -> cardLayout.show(mainPanel, "reportDisplayPage"));
+
+        rootPanel.add(reportsButton);
     }
 }

@@ -29,7 +29,7 @@ public class ReportTable {
             }
         };
 
-        JComboBox<Integer> comboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5});
+        JComboBox<Integer> comboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
         for (Map.Entry<Integer, Report> entry : displayedReports.entrySet()) {
             Integer reportId = entry.getKey();
@@ -77,6 +77,10 @@ public class ReportTable {
         });
 
         comboBox.addActionListener(e -> {
+            if(reportTable.getSelectedRow() == -1){
+                return;
+            }
+
             int id = Integer.parseInt(String.valueOf(reportTable.getModel().getValueAt(reportTable.getSelectedRow(), 0)));
             Report report = displayedReports.get(id);
             report.setAssignmentWorkerID(Integer.parseInt(String.valueOf(comboBox.getSelectedItem())));
