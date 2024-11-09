@@ -6,6 +6,8 @@ import main.java.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -54,6 +56,16 @@ public class RegisterPage {
 
         JButton registerButton = new JButton("Zarejestruj się");
         registerButton.setPreferredSize(new Dimension(120, 35));
+
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    registerButton.doClick();
+                }
+            }
+        });
+
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
