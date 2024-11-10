@@ -1,13 +1,14 @@
 package main.java.view;
 
 import main.java.Main;
-import main.java.model.Policeman;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class HomePage extends AbstractPage{
+    private static final Dimension BTN_DIMENSION = new Dimension(200, 200);
+
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         // This should never happen under normal circumstances
         if(Main.currentUser == null){
@@ -16,7 +17,7 @@ public class HomePage extends AbstractPage{
         }
 
         System.out.println("Logged in as user: " + Main.usersDatabase.getUserId(Main.currentUser));
-        rootPanel.setLayout(new FlowLayout());
+        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         rootPanel.setBackground(new Color(50, 150, 200));
 
         String welcome = "Witaj ".concat(Main.currentUser.getName());
@@ -24,32 +25,48 @@ public class HomePage extends AbstractPage{
         JLabel welcomeLabel = new JLabel(welcome);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
         welcomeLabel.setForeground(Color.WHITE);
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         rootPanel.add(welcomeLabel);
+
+        JPanel spacerPanel = new JPanel(new GridBagLayout());
+
+        JPanel controlsPanel = new JPanel();
+        controlsPanel.setLayout(new FlowLayout());
+        controlsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton logoutButton = new JButton("Wyloguj");
         logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
+        logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         rootPanel.add(logoutButton);
 
         ReportPage reportPage = new ReportPage();
         mainPanel.add(reportPage.generatePage(cardLayout, mainPanel), "reportPage");
 
         JButton reportButton = new JButton("Nowy donos");
+        reportButton.setPreferredSize(BTN_DIMENSION);
         reportButton.addActionListener(e -> cardLayout.show(mainPanel, "reportPage"));
-        rootPanel.add(reportButton);
+        controlsPanel.add(reportButton);
 
-        generateReportsButton(cardLayout, mainPanel);
+        controlsPanel.add(generateReportsButton(cardLayout, mainPanel));
+
+        spacerPanel.add(controlsPanel);
+        rootPanel.add(spacerPanel);
         return rootPanel;
     }
 
-    private void generateReportsButton(CardLayout cardLayout, JPanel mainPanel){
+    private JButton generateReportsButton(CardLayout cardLayout, JPanel mainPanel){
         ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterUserId(Main.usersDatabase.getUserId(Main.currentUser)));
 
         //ReportDisplayPage reportDisplayPage = new ReportDisplayPage(null);
         mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
 
         JButton reportsButton = new JButton("Wyświetl listę raportów");
-        reportsButton.addActionListener(e -> cardLayout.show(mainPanel, "reportDisplayPage"));
+        reportsButton.setPreferredSize(BTN_DIMENSION);
+        reportsButton.addActionListener(e -> {
+            reportDisplayPage.changeDisplayedReports(reportDisplayPage.defaultFilter);
+            cardLayout.show(mainPanel, "reportDisplayPage");
+        });
 
-        rootPanel.add(reportsButton);
+        return reportsButton;
     }
 }

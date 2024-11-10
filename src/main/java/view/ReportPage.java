@@ -90,8 +90,8 @@ public class ReportPage extends AbstractPage{
     }
 
     private JButton createBackButton(CardLayout cardLayout, JPanel mainPanel) {
-        JButton backButton = new JButton("Wykonaj obowiązek obywatelski");
-        backButton.setText("Powrót");
+        JButton backButton = new JButton("Powrót");
+        backButton.setPreferredSize(new Dimension(75, 35));
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
 
         return backButton;
