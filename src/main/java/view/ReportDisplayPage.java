@@ -6,8 +6,6 @@ import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -24,6 +22,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Main.usersDatabase.getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         super(defaultFilter);
@@ -107,11 +106,14 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
 
     private JTable createReportTable() {
         ReportTable reportTableCreator = new ReportTable(displayedReports, editEnabled);
-        return reportTableCreator.createTable();
+        JTable createdTable = reportTableCreator.createTable();
+        createdTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
+        return createdTable;
     }
 
     private void updateReportTable() {
         reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
+        reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
     private void openFilterDialog() {

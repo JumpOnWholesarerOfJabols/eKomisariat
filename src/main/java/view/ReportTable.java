@@ -4,12 +4,17 @@ import main.java.Main;
 import main.java.model.Report;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Map;
 
 public class ReportTable {
+    private static final int REPORT_ID_COLUMN = 0;
+    private static final int POLICEMAN_COLUMN = 3;
+
 
     private final Map<Integer, Report> displayedReports;
     private final boolean editEnabled;
@@ -25,11 +30,9 @@ public class ReportTable {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return editEnabled && column == 3;
+                return editEnabled && column == POLICEMAN_COLUMN;
             }
         };
-
-        JComboBox<Integer> comboBox = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
 
         for (Map.Entry<Integer, Report> entry : displayedReports.entrySet()) {
             Integer reportId = entry.getKey();
@@ -51,8 +54,6 @@ public class ReportTable {
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         reportTable.setAutoCreateRowSorter(true);
         reportTable.setRowHeight(35);
-
-        reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(comboBox));
 
         reportTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         reportTable.getTableHeader().setBackground(new Color(35, 78, 117));
@@ -76,16 +77,17 @@ public class ReportTable {
             }
         });
 
-        comboBox.addActionListener(e -> {
-            if(reportTable.getSelectedRow() == -1){
-                return;
+        model.addTableModelListener(e -> {
+            if(e.getType() == TableModelEvent.UPDATE) {
+                // This means the policeman attached to the report was updated
+                if(e.getColumn() == POLICEMAN_COLUMN) {
+                    int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
+                    Report report = displayedReports.get(id);
+                    report.setAssignmentWorkerID(Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString()));
+
+                    Main.reportsDatabase.updateItemInDatabase(id, report);
+                }
             }
-
-            int id = Integer.parseInt(String.valueOf(reportTable.getModel().getValueAt(reportTable.getSelectedRow(), 0)));
-            Report report = displayedReports.get(id);
-            report.setAssignmentWorkerID(Integer.parseInt(String.valueOf(comboBox.getSelectedItem())));
-
-            Main.reportsDatabase.updateItemInDatabase(id, report);
         });
 
         return reportTable;
