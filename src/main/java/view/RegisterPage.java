@@ -59,7 +59,7 @@ public class RegisterPage {
         passwordField = new JPasswordField();
         passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
 
-        passwordInfoLabel = new JLabel("Hasło musi zawierać minimum 6 znaków, jedną literę i jedną cyfre");
+        passwordInfoLabel = new JLabel("Hasło musi zawierać minimum 6 znaków, jedną wielką literę i jedną cyfre");
 
         registerButton = new JButton("Zarejestruj się");
         registerButton.setPreferredSize(new Dimension(120, 35));
