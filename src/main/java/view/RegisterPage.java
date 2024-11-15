@@ -10,25 +10,23 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class RegisterPage {
+public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
 
+    private JTextField nameField;
+    private JTextField surnameField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
+    private JButton registerButton;
+    private JLabel passwordInfoLabel;
+
     public RegisterPage(DatabaseOperations<User> usersDatabase) {
+        super();
         this.usersDatabase = usersDatabase;
     }
 
-    JTextField nameField;
-    JTextField surnameField;
-    JTextField emailField;
-    JPasswordField passwordField;
-    JButton registerButton;
-    JLabel passwordInfoLabel;
-
-    public JPanel generateRegisterPage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel registerPanel = new JPanel();
-        registerPanel.setLayout(new GridBagLayout());
-        registerPanel.setBackground(new Color(35,78,117));
-        registerPanel.setBorder(BorderFactory.createEmptyBorder(60, 145, 60, 145));
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        rootPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -98,7 +96,6 @@ public class RegisterPage {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 cardLayout.show(mainPanel, "loginPage");
             }
 
@@ -123,9 +120,9 @@ public class RegisterPage {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridy = 7;
         mainRegisterPanel.add(loginLabel, gbc);
-        registerPanel.add(mainRegisterPanel);
+        rootPanel.add(mainRegisterPanel);
 
-        return registerPanel;
+        return rootPanel;
     }
 
     private boolean isDataValid() {

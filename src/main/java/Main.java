@@ -4,7 +4,10 @@ import main.java.database.DatabaseOperations;
 import main.java.database.ReportsDatabase;
 import main.java.database.UsersDatabase;
 import main.java.model.User;
-import main.java.view.*;
+import main.java.view.HomePage;
+import main.java.view.LoginPage;
+import main.java.view.RegisterPage;
+import main.java.view.ReportPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +17,7 @@ public class Main {
     public static User currentUser;
     public static final String folderPath = "src/main/resources/users/";
     public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
-    public static final UsersDatabase usersDatabase = new UsersDatabase(folderPath);
-
+    public static final UsersDatabase usersDatabase = new UsersDatabase();
     public static void main(String[] args) {
         testy();
         JFrame f = new JFrame("eKomisariat");
@@ -29,10 +31,10 @@ public class Main {
 
         // LOGIN PAGE PANEL
         LoginPage loginPage = new LoginPage(usersDatabase);
-        JPanel loginPanel = loginPage.generateLoginPage(cardLayout, mainPanel);
+        JPanel loginPanel = loginPage.generatePage(cardLayout, mainPanel);
 
         RegisterPage registerPage = new RegisterPage(usersDatabase);
-        JPanel registerPanel = registerPage.generateRegisterPage(cardLayout, mainPanel);
+        JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
       
         mainPanel.add(loginPanel, "loginPage");
         mainPanel.add(registerPanel, "registerPage");

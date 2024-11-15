@@ -6,43 +6,24 @@ import main.java.model.Report;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReportPage {
-
+public class ReportPage extends AbstractPage{
     private JTextField titleField;
     private JTextArea descriptionField;
     private JButton sendButton;
     private JScrollPane scrollPane;
 
-    // testowanie
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Report Page Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 700);
-
-        // Create CardLayout and mainPanel (required by generateReportPage)
-        CardLayout cardLayout = new CardLayout();
-        JPanel mainPanel = new JPanel(cardLayout);
-
-        // Create ReportPage and add its JPanel to mainPanel
-        ReportPage reportPage = new ReportPage();
-        JPanel reportPanel = reportPage.generateReportPage(cardLayout, mainPanel);
-        mainPanel.add(reportPanel, "reportPanel");
-
-        // Add mainPanel to frame and make it visible
-        frame.add(mainPanel);
-        frame.setMinimumSize(new Dimension(600, 400)); // Prevent window from shrinking too much
-        frame.setVisible(true);
-    }
-
     // Generate the report page
-    public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        rootPanel.setLayout(new CardLayout());
+
         JPanel reportPanel = createReportPanel();
-        JPanel contentPanel = createContentPanel();
+        JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
 
         // Add the content panel to the main report panel
         reportPanel.add(contentPanel, new GridBagConstraints());
+        rootPanel.add(reportPanel, "reportForm");
 
-        return reportPanel;
+        return rootPanel;
     }
 
     private JPanel createReportPanel() {
@@ -52,7 +33,7 @@ public class ReportPage {
         return reportPanel;
     }
 
-    private JPanel createContentPanel() {
+    private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(new Color(240, 240, 240));
         contentPanel.setMinimumSize(new Dimension(500, 300));
@@ -70,6 +51,8 @@ public class ReportPage {
         sendButton = createSendButton();
         gbc.gridy = 2;
         contentPanel.add(sendButton, gbc);
+
+        contentPanel.add(createBackButton(cardLayout, mainPanel), gbc);
 
         return contentPanel;
     }
@@ -106,6 +89,14 @@ public class ReportPage {
         return scrollPane;
     }
 
+    private JButton createBackButton(CardLayout cardLayout, JPanel mainPanel) {
+        JButton backButton = new JButton("Powrót");
+        backButton.setPreferredSize(new Dimension(75, 35));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
+
+        return backButton;
+    }
+
     private JButton createSendButton() {
         JButton sendButton = new JButton("Wykonaj obowiązek obywatelski");
         sendButton.setPreferredSize(new Dimension(120, 35));
@@ -113,7 +104,7 @@ public class ReportPage {
         sendButton.addActionListener(e -> {
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = 2137 ;//Main.usersDatabase.getUserId(Main.currentUser);
+            int userID = Main.usersDatabase.getUserId(Main.currentUser);
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);

@@ -1,6 +1,7 @@
 package main.java.database;
 
-import main.java.model.Report;
+import main.java.model.Policeman;
+import main.java.model.User;
 import main.java.utils.FileManager;
 
 import java.io.*;
@@ -11,24 +12,24 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ReportsDatabase implements DatabaseOperations<Report> {
-    private final ReportsFileManager reportsFileManager;
-    private static int ID = 1;
+public class PolicemenDatabase implements DatabaseOperations<Policeman> {
+    private final PolicemenFileManager policemenFileManager;
+    private int ID = 1;
 
-    private final Map<Integer, Report> data;
+    private final Map<Integer, Policeman> data;
 
-    public ReportsDatabase(String folderPath) {
-        reportsFileManager = new ReportsFileManager(folderPath);
+    public PolicemenDatabase(String folderPath) {
+        this.policemenFileManager = new PolicemenFileManager(folderPath);
         data = importDataFromFile();
     }
 
-    public ReportsDatabase() {
-        this("src/main/resources/reports/");
+    public PolicemenDatabase() {
+        this("src/main/resources/users/");
     }
 
     @Override
-    public Map<Integer, Report> importDataFromFile() {
-        Map<Integer, Report> map = reportsFileManager.importDatabase();
+    public Map<Integer, Policeman> importDataFromFile() {
+        Map<Integer, Policeman> map = policemenFileManager.importDatabase();
         ID = map.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
 
         return map;
@@ -36,38 +37,50 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
 
     @Override
     public void exportDataToFile() {
-        reportsFileManager.exportDatabase(data);
+        policemenFileManager.exportDatabase(data);
     }
 
     @Override
-    public void addItemToDatabase(Report item) {
+    public void addItemToDatabase(Policeman item) {
         addItemToDatabase(ID++, item);
     }
 
     @Override
-    public void addItemToDatabase(int id, Report item) {
+    public void addItemToDatabase(int id, Policeman item) {
         data.put(id, item);
-        reportsFileManager.exportItem(id, item);
+        policemenFileManager.exportItem(id, item);
     }
 
     @Override
     public void removeItemFromDatabase(int id) {
         data.remove(id);
-        reportsFileManager.deleteItem(id);
+        policemenFileManager.deleteItem(id);
     }
 
     @Override
-    public Report getItemFromDatabase(int id) {
+    public Policeman getItemFromDatabase(int id) {
         return data.get(id);
     }
 
     @Override
-    public Map<Integer, Report> getAll() {
+    public void updateItemInDatabase(int id, Policeman item) {
+        removeItemFromDatabase(id);
+        addItemToDatabase(id, item);
+    }
+
+    @Override
+    public void clearDatabase() {
+        data.clear();
+        policemenFileManager.clearDatabase();
+    }
+
+    @Override
+    public Map<Integer, Policeman> getAll() {
         return data;
     }
 
     @Override
-    public LinkedHashMap<Integer, Report> getSorted(Comparator<Report> comparator) {
+    public LinkedHashMap<Integer, Policeman> getSorted(Comparator<Policeman> comparator) {
         return data.entrySet().stream()
                 .sorted(((o1, o2) -> comparator.compare(o1.getValue(), o2.getValue())))
                 .collect(Collectors.toMap(
@@ -79,7 +92,7 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
     }
 
     @Override
-    public Map<Integer, Report> getFiltered(Predicate<Report> filter) {
+    public Map<Integer, Policeman> getFiltered(Predicate<Policeman> filter) {
         return data.entrySet().stream().filter(o -> filter.test(o.getValue()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, //object -> object.getKey()
@@ -94,32 +107,15 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
         return false;
     }
 
-    @Override
-    public void updateItemInDatabase(int id, Report item) {
-        removeItemFromDatabase(id);
-        addItemToDatabase(id, item);
-    }
-
-    @Override
-    public void clearDatabase() {
-        data.clear();
-        reportsFileManager.clearDatabase();
-    }
-
-
-    private static class ReportsFileManager implements FileManager<Report> {
+    private static class PolicemenFileManager implements FileManager<Policeman> {
         private final String folderPath;
         private final Path path;
         private List<String> filesList;
 
-        private ReportsFileManager(String folderPath) {
+        private PolicemenFileManager(String folderPath) {
             this.folderPath = folderPath;
             this.path = Paths.get(folderPath);
             this.filesList = importFilesList(path);
-        }
-
-        private String getFilePathFromId(int id) {
-            return folderPath + id + ".dat";
         }
 
         private static int getIdFromFilePath(String filePath) {
@@ -128,21 +124,20 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
             return Integer.parseInt(filename.split("\\.")[0]);
         }
 
-        private void refreshFilesList() {
-            filesList.clear();
-            filesList.addAll(importFilesList(path));
+        private String getFilePathFromId(int id) {
+            return folderPath + id + ".dat";
         }
 
         @Override
-        public Map<Integer, Report> importDatabase() {
-            this.filesList = new ArrayList<>(importFilesList(path));
+        public Map<Integer, Policeman> importDatabase() {
+            this.filesList = importFilesList(path);
 
             return filesList.isEmpty() ? new HashMap<>() : filesList.stream().map(this::importItem)
                     .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
         }
 
         @Override
-        public void exportDatabase(Map<Integer, Report> data) {
+        public void exportDatabase(Map<Integer, Policeman> data) {
             data.forEach(this::exportItem);
         }
 
@@ -150,35 +145,35 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
         public void clearDatabase() {
             this.filesList = new ArrayList<>(importFilesList(path));
 
-            filesList.stream().map(ReportsFileManager::getIdFromFilePath).forEach(this::deleteItem);
+            filesList.stream().map(PolicemenFileManager::getIdFromFilePath).forEach(this::deleteItem);
             filesList.clear();
         }
 
         @Override
-        public void exportItem(int key, Report item) {
-            Path itemPath = Path.of(getFilePathFromId(key));
+        public void exportItem(int key, Policeman item) {
+            Path userPath = Path.of(getFilePathFromId(key));
 
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(itemPath.toFile()))) {
+            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(userPath.toFile()))) {
                 out.writeObject(item);
-                //logi - wyeksportowano item
+
             } catch (IOException e) {
-                //logi - blad podczas eksportu itemu
+
             }
         }
 
         @Override
-        public AbstractMap.SimpleEntry<Integer, Report> importItem(String path) {
-            Path reportPath = Paths.get(path);
+        public AbstractMap.SimpleEntry<Integer, Policeman> importItem(String path) {
+            Path userPath = Paths.get(path);
 
-            if (!Files.exists(reportPath)) {
+            if (!Files.exists(userPath)) {
                 //logi - że brak pliku
                 return null;
             }
 
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(reportPath.toFile()))) {
-                Report report = (Report) in.readObject();
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(userPath.toFile()))) {
+                Policeman user = (Policeman) in.readObject();
                 int id = getIdFromFilePath(path);
-                return new AbstractMap.SimpleEntry<>(id, report);
+                return new AbstractMap.SimpleEntry<>(id, user);
                 //logi - wczytano item
             } catch (IOException | ClassNotFoundException e) {
                 //logi - blad podczas wczytywania itemu

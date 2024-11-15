@@ -1,19 +1,27 @@
 package main.java.view;
 
+import main.java.Main;
 import main.java.model.Report;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Map;
 
 public class ReportTable {
+    private static final int REPORT_ID_COLUMN = 0;
+    private static final int POLICEMAN_COLUMN = 3;
+
 
     private final Map<Integer, Report> displayedReports;
+    private final boolean editEnabled;
 
-    public ReportTable(Map<Integer, Report> displayedReports) {
+    public ReportTable(Map<Integer, Report> displayedReports, boolean editEnabled) {
         this.displayedReports = displayedReports;
+        this.editEnabled = editEnabled;
     }
 
     public JTable createTable() {
@@ -22,7 +30,7 @@ public class ReportTable {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return editEnabled && column == POLICEMAN_COLUMN;
             }
         };
 
@@ -34,7 +42,7 @@ public class ReportTable {
                     reportId,
                     report.getUserId(),
                     report.getTitle(),
-                    (report.getAssignmentWorkerID() == -1 ? "Brak" : report.getAssignmentWorkerID()),
+                    report.getAssignmentWorkerID(),
                     report.getStatus(),
                     report.getDate()
             };
@@ -66,6 +74,19 @@ public class ReportTable {
                     c.setBackground(new Color(100, 150, 200));
                 }
                 return c;
+            }
+        });
+
+        model.addTableModelListener(e -> {
+            if(e.getType() == TableModelEvent.UPDATE) {
+                // This means the policeman attached to the report was updated
+                if(e.getColumn() == POLICEMAN_COLUMN) {
+                    int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
+                    Report report = displayedReports.get(id);
+                    report.setAssignmentWorkerID(Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString()));
+
+                    Main.reportsDatabase.updateItemInDatabase(id, report);
+                }
             }
         });
 

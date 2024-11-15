@@ -6,36 +6,26 @@ import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class ReportDisplayPage {
-
+public class ReportDisplayPage extends AbstractTablePage<Report> {
     private final Map<Integer, Report> baseReports;
     private Map<Integer, Report> displayedReports;
-    private final Predicate<Report> defaultFilter;
-    private Predicate<Report> currentFilter;
 
-    private JFrame frame;
-    private JPanel mainPanel;
     private JPanel reportPanel;
     private JTable reportTable;
     private JScrollPane scrollPane;
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Main.usersDatabase.getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
-        if (defaultFilter == null) {
-            this.defaultFilter = r -> true;
-        } else {
-            this.defaultFilter = defaultFilter;
-        }
+        super(defaultFilter);
         baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
         displayedReports = baseReports;
     }
@@ -49,15 +39,13 @@ public class ReportDisplayPage {
         updateReportTable();
     }
 
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            ReportDisplayPage reportPage = new ReportDisplayPage(null);
-//            reportPage.initializeGUI();
-//        });
-//    }
+    @Override
+    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        CardLayout rootCardLayout = new CardLayout();
+        rootPanel.setLayout(rootCardLayout);
 
-    public JPanel initializeGUI(CardLayout cardLayout, JPanel mainPanel) {
         reportPanel = generateReportPage(cardLayout, mainPanel);
+        rootPanel.add(reportPanel, "reportPanel");
 
         reportTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -69,17 +57,14 @@ public class ReportDisplayPage {
                 }
             }
         });
-
-        frame.add(mainPanel);
-
-        return reportPanel;
+        return rootPanel;
     }
 
     public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
         reportPanel = createReportPanel();
         reportPanel.add(contentPanel, new GridBagConstraints());
-        return contentPanel;
+        return reportPanel;
     }
 
     private JPanel createReportPanel() {
@@ -108,19 +93,9 @@ public class ReportDisplayPage {
         filterButton = new JButton("Filtry");
         backButton = new JButton("Powrót");
 
-        filterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openFilterDialog();
-            }
-        });
+        filterButton.addActionListener(e -> openFilterDialog());
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
 
         buttonPanel.add(filterButton);
         buttonPanel.add(backButton);
@@ -130,12 +105,15 @@ public class ReportDisplayPage {
     }
 
     private JTable createReportTable() {
-        ReportTable reportTableCreator = new ReportTable(displayedReports);
-        return reportTableCreator.createTable();
+        ReportTable reportTableCreator = new ReportTable(displayedReports, editEnabled);
+        JTable createdTable = reportTableCreator.createTable();
+        createdTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
+        return createdTable;
     }
 
     private void updateReportTable() {
-        reportTable.setModel(new ReportTable(displayedReports).createTable().getModel());
+        reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
+        reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
     private void openFilterDialog() {
