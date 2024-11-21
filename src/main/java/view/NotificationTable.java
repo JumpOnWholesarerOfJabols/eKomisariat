@@ -20,7 +20,7 @@ public class NotificationTable {
     }
 
     public JTable createTable() {
-        String[] columnNames = {"Rodzaj powiadomienia", "ID zmienionego obiektu"};
+        String[] columnNames = {"Rodzaj powiadomienia", "ID zmienionego obiektu", "Data"};
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -34,7 +34,8 @@ public class NotificationTable {
 
             Object[] row = {
                     report.type().value(),
-                    report.changedEntityId()
+                    report.changedEntityId(),
+                    report.localDateTime()
             };
 
             model.addRow(row);
