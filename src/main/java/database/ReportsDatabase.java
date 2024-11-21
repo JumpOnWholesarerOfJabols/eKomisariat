@@ -26,6 +26,10 @@ public class ReportsDatabase implements DatabaseOperations<Report> {
         this("src/main/resources/reports/");
     }
 
+    public int getItemID(Report report) {
+        return data.entrySet().stream().filter(e -> e.getValue().equals(report)).map(Map.Entry::getKey).findFirst().orElse(-1);
+    }
+
     @Override
     public Map<Integer, Report> importDataFromFile() {
         Map<Integer, Report> map = reportsFileManager.importDatabase();
