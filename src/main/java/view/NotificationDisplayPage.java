@@ -3,6 +3,8 @@ package main.java.view;
 import main.java.Main;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
+import main.java.model.Report;
+import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +22,18 @@ public class NotificationDisplayPage extends AbstractTablePage<Notification> {
     private JTable reportTable;
     private JScrollPane scrollPane;
     private JPanel buttonPanel;
+    //private JButton filterButton;
     private JButton backButton;
+    //private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Main.usersDatabase.getAll().keySet().toArray(new Integer[0]));
 
     public NotificationDisplayPage(Predicate<Notification> defaultFilter) {
         super(defaultFilter);
         baseReports = new HashMap<>(Main.notificationDatabase.getFiltered(this.defaultFilter));
         displayedReports = baseReports;
+    }
+
+    private Predicate<Notification> getFilter(Predicate<Notification> newFilter) {
+        return null;
     }
 
     public void changeDisplayedReports(Predicate<Notification> newFilter) {
@@ -99,12 +107,12 @@ public class NotificationDisplayPage extends AbstractTablePage<Notification> {
     }
 
     private JTable createReportTable() {
-        NotificationTable reportTableCreator = new NotificationTable(displayedReports);
+        NotificationTable reportTableCreator = new NotificationTable(displayedReports, editEnabled);
         JTable createdTable = reportTableCreator.createTable();
         return createdTable;
     }
 
     private void updateReportTable() {
-        reportTable.setModel(new NotificationTable(displayedReports).createTable().getModel());
+        reportTable.setModel(new NotificationTable(displayedReports, editEnabled).createTable().getModel());
     }
 }

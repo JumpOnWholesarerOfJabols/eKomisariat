@@ -1,24 +1,26 @@
 package main.java.view;
 
+import main.java.Main;
 import main.java.model.Notification;
+import main.java.model.NotificationType;
+import main.java.model.Report;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class NotificationTable {
     private final Map<Integer, Notification> displayedReports;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public NotificationTable(Map<Integer, Notification> displayedReports) {
+    public NotificationTable(Map<Integer, Notification> displayedReports, boolean editEnabled) {
         this.displayedReports = displayedReports;
     }
 
     public JTable createTable() {
-        String[] columnNames = {"Rodzaj powiadomienia", "ID zmienionego obiektu", "Data"};
+        String[] columnNames = {"Rodzaj powiadomienia", "ID zmienionego obiektu"};
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -32,8 +34,7 @@ public class NotificationTable {
 
             Object[] row = {
                     report.type().value(),
-                    report.changedEntityId(),
-                    formatter.format(report.localDateTime())
+                    report.changedEntityId()
             };
 
             model.addRow(row);

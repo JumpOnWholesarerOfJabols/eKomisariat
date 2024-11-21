@@ -14,7 +14,6 @@ import main.java.view.ReportPage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 public class Main {
@@ -62,9 +61,9 @@ public class Main {
         Map<Integer, User> data = usersDatabase.importDataFromFile();
         data.forEach((id, user) -> System.out.println(user));
 
-        notificationDatabase.addItemToDatabase(new Notification(1, NotificationType.USER_CREATED, 4, LocalDateTime.now()));
-        notificationDatabase.addItemToDatabase(new Notification(5, NotificationType.REPORT_CREATED, 2, LocalDateTime.now().minusHours(5)));
-        notificationDatabase.addItemToDatabase(new Notification(21, NotificationType.REPORT_ASSIGNED, 15, LocalDateTime.now().minusDays(21)));
-        notificationDatabase.addItemToDatabase(new Notification(9, NotificationType.REPORT_MODIFIED, 3, LocalDateTime.now().minusYears(3)));
+        notificationDatabase.addItemToDatabase(new Notification(1, NotificationType.USER_CREATED, 4));
+        notificationDatabase.addItemToDatabase(new Notification(5, NotificationType.REPORT_CREATED, 2));
+        notificationDatabase.addItemToDatabase(new Notification(21, NotificationType.REPORT_ASSIGNED, 15));
+        notificationDatabase.addItemToDatabase(new Notification(9, NotificationType.REPORT_MODIFIED, 3));
     }
 }

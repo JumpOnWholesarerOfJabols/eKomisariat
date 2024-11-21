@@ -21,10 +21,6 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
         data = importDataFromFile();
     }
 
-    public int getItemID(T item){
-        return data.entrySet().stream().filter(e -> e.getValue().equals(item)).map(Map.Entry::getKey).findFirst().orElse(-1);
-    }
-
     @Override
     public Map<Integer, T> importDataFromFile() {
         Map<Integer, T> map = policemenFileManager.importDatabase();
