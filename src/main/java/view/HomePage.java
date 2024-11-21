@@ -78,7 +78,7 @@ public class HomePage extends AbstractPage{
         JButton notificationsButton = new JButton("Wyświetl powiadomienia");
         notificationsButton.setPreferredSize(BTN_DIMENSION);
         notificationsButton.addActionListener(e -> {
-            //notificationDisplayPage.changeDisplayedReports(notificationDisplayPage.defaultFilter);
+            notificationDisplayPage.changeDisplayedReports(notificationDisplayPage.defaultFilter);
             cardLayout.show(mainPanel, "notificationDisplayPage");
         });
 
