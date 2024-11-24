@@ -1,6 +1,8 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.model.Notification;
+import main.java.model.NotificationType;
 import main.java.model.Report;
 
 import javax.swing.*;
@@ -9,6 +11,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ReportTable {
@@ -83,9 +86,12 @@ public class ReportTable {
                 if(e.getColumn() == POLICEMAN_COLUMN) {
                     int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
                     Report report = displayedReports.get(id);
-                    report.setAssignmentWorkerID(Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString()));
+
+                    int policemanId = Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString());
+                    report.setAssignmentWorkerID(policemanId);
 
                     Main.reportsDatabase.updateItemInDatabase(id, report);
+                    Main.notificationDatabase.addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, id, LocalDateTime.now()));
                 }
             }
         });
