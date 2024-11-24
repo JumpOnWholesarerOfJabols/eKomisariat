@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.utils.NotificationsFilterMethods;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
@@ -72,7 +73,7 @@ public class HomePage extends AbstractPage{
     }
 
     private JButton generateNotificationsButton(CardLayout cardLayout, JPanel mainPanel){
-        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(null);
+        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Main.usersDatabase.getUserId(Main.currentUser)));
         mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");
 
         JButton notificationsButton = new JButton("Wyświetl powiadomienia");
