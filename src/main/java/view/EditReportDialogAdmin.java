@@ -1,115 +1,121 @@
 package main.java.view;
 
 import com.toedter.calendar.JDateChooser;
+import main.java.Main;
 import main.java.model.Report;
-import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.function.Predicate;
+import java.util.Date;
 
 public class EditReportDialogAdmin extends JDialog {
-    private final ReportDisplayPage reportDisplayPage;
-    private final JPanel parentPanel;
-    private Predicate<Report> filter = null;
 
-    public EditReportDialogAdmin(Frame owner, ReportDisplayPage reportDisplayPage, JPanel parentPanel) {
-        super(owner, "Filtry", true);
-        this.reportDisplayPage = reportDisplayPage;
-        this.parentPanel = parentPanel;
+    public EditReportDialogAdmin(Frame owner, Integer reportId, Report report) {
+        super(owner, "Report Details", true);
 
-        setSize(400, 400);
-        setLocationRelativeTo(owner);
+        setLayout(new GridBagLayout());
+        setPreferredSize(new Dimension(900, 400));
+        setMinimumSize(new Dimension(800, 300));
 
-        JPanel filterPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        filterPanel.setBackground(new Color(240, 240, 240));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 20, 10, 20);
+        gbc.anchor = GridBagConstraints.NORTH;
 
-        JTextField userIdField = new JTextField();
-        JTextField assignmentWorkerField = new JTextField();
-        JTextField reportTitleField = new JTextField();
-        JTextField reportTitleFirstLetterField = new JTextField();
+        gbc.weightx = 0.1;
+        gbc.gridx = 0;
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.insets = new Insets(10, 20, 10, 20);
+        gbc2.anchor = GridBagConstraints.NORTH;
+        gbc2.weightx = 0.9;
+
+        JLabel userIdLabel = new JLabel("User Id: ");
+        gbc.gridy = 0;
+        add(userIdLabel, gbc);
+
+        JTextField userIdField = new JTextField(String.valueOf(report.getUserId()));
+        gbc2.gridx = 1;
+        add(userIdField, gbc2);
+
+        JLabel titleLabel = new JLabel("Title: ");
+        gbc.gridy = 1;
+        add(titleLabel, gbc);
+
+        JTextField titleField = new JTextField(report.getTitle());
+        gbc2.gridx = 1;
+        add(titleField, gbc2);
+
+        JLabel descriptionLabel = new JLabel("Description: ");
+        gbc.gridy = 2;
+        add(descriptionLabel, gbc);
+
+        JTextArea descriptionField = new JTextArea(report.getDescription());
+        descriptionField.setRows(5);
+        gbc2.gridx = 1;
+        add(descriptionField, gbc2);
+
+        JLabel assignmentWorkerIdLabel = new JLabel("Assignment Worker Id: ");
+        gbc.gridy = 3;
+        add(assignmentWorkerIdLabel, gbc);
+
+        JTextField assignmentWorkerIdField = new JTextField(String.valueOf(report.getAssignmentWorkerID()));
+        gbc2.gridx = 1;
+        add(assignmentWorkerIdField, gbc2);
+
+        JLabel statusLabel = new JLabel("Status: ");
+        gbc.gridy = 4;
+        add(statusLabel, gbc);
+
         JComboBox<Report.reportStatus> statusComboBox = new JComboBox<>(Report.reportStatus.values());
+        statusComboBox.setSelectedItem(report.getStatus());
+        gbc2.gridx = 1;
+        add(statusComboBox, gbc2);
 
-        // Zamiast JTextField, używamy JDateChooser
-        JDateChooser startDateChooser = new JDateChooser();
-        JDateChooser endDateChooser = new JDateChooser();
+        JLabel reportDateLabel = new JLabel("Date: ");
+        gbc.gridy = 5;
+        add(reportDateLabel, gbc);
 
-        filterPanel.add(new JLabel("ID Użytkownika:"));
-        filterPanel.add(userIdField);
-        filterPanel.add(new JLabel("Tytuł Meldunku:"));
-        filterPanel.add(reportTitleField);
-        filterPanel.add(new JLabel("Pierwsza litera tytułu:"));
-        filterPanel.add(reportTitleFirstLetterField);
-        filterPanel.add(new JLabel("ID Funkcjonariusza:"));
-        filterPanel.add(assignmentWorkerField);
-        filterPanel.add(new JLabel("Status:"));
-        filterPanel.add(statusComboBox);
-        filterPanel.add(new JLabel("Data początkowa:"));
-        filterPanel.add(startDateChooser);
-        filterPanel.add(new JLabel("Data końcowa:"));
-        filterPanel.add(endDateChooser);
+        LocalDate localDate = report.getDate();
+        Date date = java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        JDateChooser reportDate = new JDateChooser(date);
+        gbc2.gridx = 1;
+        add(reportDate, gbc2);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        JButton applyButton = new JButton("Zastosuj");
-        JButton cancelButton = new JButton("Anuluj");
+        JButton saveButton = new JButton("Zapisz");
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Report updatedReport = new Report(Integer.parseInt(userIdField.getText()), titleField.getText(), descriptionField.getText());
+                updatedReport.setAssignmentWorkerID(Integer.parseInt(assignmentWorkerIdField.getText()));
+                updatedReport.setStatus((Report.reportStatus) statusComboBox.getSelectedItem());
 
-        buttonPanel.add(applyButton);
-        buttonPanel.add(cancelButton);
-
-        add(filterPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        cancelButton.addActionListener(e -> dispose());
-
-        applyButton.addActionListener(e -> {
-            Integer userId = userIdField.getText().isEmpty() ? null : Integer.parseInt(userIdField.getText());
-            String reportTitle = reportTitleField.getText().isEmpty() ? null : reportTitleField.getText();
-            Character firstLetter = reportTitleFirstLetterField.getText().isEmpty() ? null : reportTitleFirstLetterField.getText().charAt(0);
-            Integer assignmentWorkerId = assignmentWorkerField.getText().isEmpty() ? null : Integer.parseInt(assignmentWorkerField.getText());
-            Report.reportStatus status = (Report.reportStatus) statusComboBox.getSelectedItem();
-
-            // Zamiana daty z JDateChooser na LocalDate
-            LocalDate startDate = getDateFromChooser(startDateChooser);
-            LocalDate endDate = getDateFromChooser(endDateChooser);
-
-            // Tworzenie pustych filtrów, które będą ignorowane, jeśli pole jest puste
-            Predicate<Report> userIdFilter = (userId != null) ? ReportsFilterMethods.filterUserId(userId) : report -> true;
-            Predicate<Report> titleFilter = (reportTitle != null && !reportTitle.isEmpty()) ? ReportsFilterMethods.filterReportTitle(reportTitle) : report -> true;
-            Predicate<Report> firstLetterFilter = (firstLetter != null) ? ReportsFilterMethods.filterReportTitleFirstLetter(firstLetter) : report -> true;
-            Predicate<Report> workerIdFilter = (assignmentWorkerId != null) ? ReportsFilterMethods.filterReportAssigmentWorker(assignmentWorkerId) : report -> true;
-            Predicate<Report> statusFilter = (status != null) ? ReportsFilterMethods.filterStatus(status) : report -> true;
-            Predicate<Report> startDateFilter = (startDate != null) ? ReportsFilterMethods.filterStartDate(startDate) : report -> true;
-            Predicate<Report> endDateFilter = (endDate != null) ? ReportsFilterMethods.filterEndDate(endDate) : report -> true;
-
-            // Łączenie filtrów w jeden
-            filter = ReportsFilterMethods.combinedFilter(
-                    userIdFilter,
-                    titleFilter,
-                    firstLetterFilter,
-                    workerIdFilter,
-                    statusFilter,
-                    startDateFilter,
-                    endDateFilter
-            );
-
-            dispose();
+                Date dateFromField = reportDate.getDate();
+                LocalDate localDate = dateFromField.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                updatedReport.setDate(localDate);
+                Main.reportsDatabase.updateItemInDatabase(reportId, updatedReport);
+                dispose();
+            }
         });
 
-    }
+        gbc.gridy = 6;
+        add(saveButton, gbc);
 
-    private LocalDate getDateFromChooser(JDateChooser dateChooser) {
-        if (dateChooser.getDate() == null) {
-            return null; // Return null if no date is selected
-        }
-        return dateChooser.getDate().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-    }
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        add(Box.createGlue(), gbc);
 
-    public Predicate<Report> getFilter() {
-        return filter;
+        pack();
+        setLocationRelativeTo(owner);
     }
 }

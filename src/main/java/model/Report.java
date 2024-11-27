@@ -30,6 +30,10 @@ public class Report implements Serializable {
         this.date = LocalDate.now();
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public int getUserId() {
         return userId;
     }
