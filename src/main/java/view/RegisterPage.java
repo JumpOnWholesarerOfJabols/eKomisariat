@@ -1,6 +1,9 @@
 package main.java.view;
 
+import main.java.Main;
 import main.java.database.DatabaseOperations;
+import main.java.model.Notification;
+import main.java.model.NotificationType;
 import main.java.model.User;
 
 import javax.swing.*;
@@ -9,6 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDateTime;
 
 public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
@@ -75,13 +79,15 @@ public class RegisterPage extends AbstractPage{
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(isDataValid()) {
-                    usersDatabase.addItemToDatabase(new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword())));
+                    User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword()));
+                    usersDatabase.addItemToDatabase(user);
                     cardLayout.show(mainPanel, "loginPage");
                     nameField.setText("");
                     surnameField.setText("");
                     passwordField.setText("");
                     emailField.setText("");
                     JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
+                    Main.notificationDatabase.addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Main.usersDatabase.getUserId(user), LocalDateTime.now()));
                 } else {
                     JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
                 }
