@@ -27,11 +27,9 @@ public class AdminPage {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 20, 10, 20);
 
         JPanel adminMainPanel = new JPanel();
         adminMainPanel.setLayout(new GridBagLayout());
-        adminMainPanel.setBackground(new Color(81, 145, 203));
 
         JPanel reportsPanel = reportDisplayPageAdmin.generatePage(cardLayout, mainPanel);
 

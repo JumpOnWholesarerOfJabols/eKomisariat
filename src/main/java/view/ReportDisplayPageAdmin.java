@@ -41,8 +41,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
 
     @Override
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
-        CardLayout rootCardLayout = new CardLayout();
-        rootPanel.setLayout(rootCardLayout);
+        rootPanel.setLayout(cardLayout);
 
         reportPanel = generateReportPage(cardLayout, mainPanel);
         rootPanel.add(reportPanel, "reportPanel");
@@ -53,7 +52,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
                 int row = reportTable.rowAtPoint(e.getPoint());
                 if (row != -1 && e.getClickCount() == 2) {
                     Integer reportId = (Integer) reportTable.getValueAt(row, 0);
-                    showReportDetails(reportId);
+                    showEditableReportDetails(reportId);
                 }
             }
         });
@@ -117,7 +116,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     }
 
     private void openFilterDialog() {
-        EditReportDialogAdmin filterDialog = new EditReportDialogAdmin(null, this, null);
+        FilterDialog filterDialog = new FilterDialog(null, this, null);
 
         filterDialog.setVisible(true);
 
@@ -130,11 +129,19 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         }
     }
 
-    private void showReportDetails(Integer reportId) {
+    private void showEditableReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);
         if (report != null) {
-            ReportDetailsDialog detailsDialog = new ReportDetailsDialog(null, reportId, report);
-            detailsDialog.setVisible(true);
+            EditReportDialogAdmin editDialog = new EditReportDialogAdmin(null, reportId, report);
+            editDialog.setVisible(true);
+
+            try {
+                Predicate<Report> emptyFilter = r -> true;
+
+                changeDisplayedReports(emptyFilter);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

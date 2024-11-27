@@ -41,7 +41,7 @@ public class LoginPage extends AbstractPage {
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
         // Create header title label
-        JLabel headerTitle = new JLabel("eKomisariat");
+        JLabel headerTitle = new JLabel("eKomisariat™");
         headerTitle.setFont(new Font("Arial", Font.BOLD, 32));
         headerTitle.setForeground(Color.WHITE);
         headerTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Align center in BoxLayout
@@ -52,7 +52,7 @@ public class LoginPage extends AbstractPage {
         titlePanel.add(headerTitle);
 
         // Create header description label
-        JLabel headerDesc = new JLabel("Nasze miejsce na Twoją sprawę ™");
+        JLabel headerDesc = new JLabel("Nasze miejsce na Twoją sprawę");
         headerDesc.setFont(new Font("Arial", Font.PLAIN, 22));
         headerDesc.setForeground(Color.WHITE);
         headerDesc.setAlignmentX(Component.CENTER_ALIGNMENT); // Align center in BoxLayout
