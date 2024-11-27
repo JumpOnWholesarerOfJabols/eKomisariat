@@ -4,10 +4,8 @@ import main.java.database.*;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
-import main.java.view.HomePage;
 import main.java.view.LoginPage;
 import main.java.view.RegisterPage;
-import main.java.view.ReportPage;
 
 import javax.swing.*;
 import java.awt.*;

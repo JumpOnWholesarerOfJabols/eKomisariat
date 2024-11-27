@@ -58,7 +58,7 @@ public class HomePage extends AbstractPage{
     }
 
     private JButton generateReportsButton(CardLayout cardLayout, JPanel mainPanel){
-        ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterUserId(Main.usersDatabase.getUserId(Main.currentUser)));
+        ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterUserId(Database.getInstance().getCurrentUserId()));
 
         //ReportDisplayPage reportDisplayPage = new ReportDisplayPage(null);
         mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
