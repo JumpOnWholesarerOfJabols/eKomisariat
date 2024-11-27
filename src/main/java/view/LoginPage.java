@@ -40,7 +40,7 @@ public class LoginPage extends AbstractPage {
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
         // Create header title label
-        JLabel headerTitle = new JLabel("eKomisariat");
+        JLabel headerTitle = new JLabel("eKomisariat™");
         headerTitle.setFont(new Font("Arial", Font.BOLD, 32));
         headerTitle.setForeground(Color.WHITE);
         headerTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Align center in BoxLayout
@@ -137,6 +137,14 @@ public class LoginPage extends AbstractPage {
 
         // Add ActionListener for loginButton to switch to newPage
         loginButton.addActionListener(e -> {
+            String passwd = new String(passwordField.getPassword());
+            if(emailField.getText().equals("admin") && passwd.equals("admin")) {
+                AdminPage adminPage = new AdminPage();
+                JPanel adminPagePanel = adminPage.generatePage(cardLayout, mainPanel);
+                mainPanel.add(adminPagePanel, "adminPage");
+                cardLayout.show(mainPanel, "adminPage");
+                return;
+            }
             // Switch to the new page when the login button is clicked
             if(tryLogIn(emailField, passwordField)) {
                 HomePage homePage = new HomePage();
