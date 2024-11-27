@@ -1,21 +1,19 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.model.Notification;
-import main.java.model.NotificationType;
-import main.java.model.Report;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class NotificationTable {
     private final Map<Integer, Notification> displayedReports;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public NotificationTable(Map<Integer, Notification> displayedReports, boolean editEnabled) {
+    public NotificationTable(Map<Integer, Notification> displayedReports) {
         this.displayedReports = displayedReports;
     }
 
@@ -35,7 +33,7 @@ public class NotificationTable {
             Object[] row = {
                     report.type().value(),
                     report.changedEntityId(),
-                    report.localDateTime()
+                    formatter.format(report.localDateTime())
             };
 
             model.addRow(row);
