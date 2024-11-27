@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.utils.NotificationsFilterMethods;
 import main.java.utils.ReportsFilterMethods;
 
@@ -12,16 +13,16 @@ public class HomePage extends AbstractPage{
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         // This should never happen under normal circumstances
-        if(Main.currentUser == null){
+        if(Database.getInstance().getCurrentUser() == null){
             JOptionPane.showMessageDialog(mainPanel, "WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP WAKE UP", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
 
-        System.out.println("Logged in as user: " + Main.usersDatabase.getUserId(Main.currentUser));
+        System.out.println("Logged in as user: " + Database.getInstance().getUsersDatabase().getUserId(Database.getInstance().getCurrentUser()));
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         rootPanel.setBackground(new Color(50, 150, 200));
 
-        String welcome = "Witaj ".concat(Main.currentUser.getName());
+        String welcome = "Witaj ".concat(Database.getInstance().getCurrentUser().getName());
 
         JLabel welcomeLabel = new JLabel(welcome);
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
@@ -73,7 +74,7 @@ public class HomePage extends AbstractPage{
     }
 
     private JButton generateNotificationsButton(CardLayout cardLayout, JPanel mainPanel){
-        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Main.usersDatabase.getUserId(Main.currentUser)));
+        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Database.getInstance().getUsersDatabase().getUserId(Database.getInstance().getCurrentUser())));
         mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");
 
         JButton notificationsButton = new JButton("Wyświetl powiadomienia");

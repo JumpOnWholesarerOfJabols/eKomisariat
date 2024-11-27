@@ -1,9 +1,6 @@
 package main.java;
 
-import main.java.database.DatabaseOperations;
-import main.java.database.FileDatabase;
-import main.java.database.ReportsDatabase;
-import main.java.database.UsersDatabase;
+import main.java.database.*;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
@@ -18,11 +15,13 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public class Main {
-    public static User currentUser;
-    public static final String folderPath = "src/main/resources/users/";
-    public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
-    public static final UsersDatabase usersDatabase = new UsersDatabase();
-    public static final FileDatabase<Notification> notificationDatabase = new FileDatabase<>("src/main/resources/notifications/");
+    //używajcie Database.getInstance().(i tutaj settery i gettery tego do czego chcecie dostęp) zamiast tego poniżej zakomentowanego
+
+    //public static User currentUser;
+    //public static final ReportsDatabase reportsDatabase = new ReportsDatabase();
+    //public static final UsersDatabase usersDatabase = new UsersDatabase();
+    //public static final FileDatabase<Notification> notificationDatabase = new FileDatabase<>("src/main/resources/notifications/");
+
     public static void main(String[] args) {
         testy();
         JFrame f = new JFrame("eKomisariat");
@@ -35,10 +34,10 @@ public class Main {
         f.add(mainPanel);
 
         // LOGIN PAGE PANEL
-        LoginPage loginPage = new LoginPage(usersDatabase);
+        LoginPage loginPage = new LoginPage(Database.getInstance().getUsersDatabase());
         JPanel loginPanel = loginPage.generatePage(cardLayout, mainPanel);
 
-        RegisterPage registerPage = new RegisterPage(usersDatabase);
+        RegisterPage registerPage = new RegisterPage(Database.getInstance().getUsersDatabase());
         JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
       
         mainPanel.add(loginPanel, "loginPage");
@@ -62,9 +61,9 @@ public class Main {
         Map<Integer, User> data = usersDatabase.importDataFromFile();
         data.forEach((id, user) -> System.out.println(user));
 
-        notificationDatabase.addItemToDatabase(new Notification(1, NotificationType.USER_CREATED, 4, LocalDateTime.now()));
-        notificationDatabase.addItemToDatabase(new Notification(5, NotificationType.REPORT_CREATED, 2, LocalDateTime.now().minusHours(5)));
-        notificationDatabase.addItemToDatabase(new Notification(21, NotificationType.REPORT_ASSIGNED, 15, LocalDateTime.now().minusDays(21)));
-        notificationDatabase.addItemToDatabase(new Notification(9, NotificationType.REPORT_MODIFIED, 3, LocalDateTime.now().minusYears(3)));
+        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(1, NotificationType.USER_CREATED, 4, LocalDateTime.now()));
+        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(5, NotificationType.REPORT_CREATED, 2, LocalDateTime.now().minusHours(5)));
+        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(21, NotificationType.REPORT_ASSIGNED, 15, LocalDateTime.now().minusDays(21)));
+        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(9, NotificationType.REPORT_MODIFIED, 3, LocalDateTime.now().minusYears(3)));
     }
 }
