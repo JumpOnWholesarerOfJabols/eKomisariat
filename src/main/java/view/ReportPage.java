@@ -1,10 +1,13 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.model.Notification;
+import main.java.model.NotificationType;
 import main.java.model.Report;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
 
 public class ReportPage extends AbstractPage{
     private JTextField titleField;
@@ -111,7 +114,9 @@ public class ReportPage extends AbstractPage{
             } else if (title.isEmpty() || description.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Wypełnienie pól to obowiązek każdego obywatela! Puste miejsca to tylko przestrzeń dla wrogów społeczeństwa!!", "ZaniedbanieObowiazkuException", JOptionPane.ERROR_MESSAGE);
             } else {
-                Main.reportsDatabase.addItemToDatabase(new Report(userID, title, description));
+                Report newReport = new Report(userID, title, description);
+                Main.reportsDatabase.addItemToDatabase(newReport);
+                Main.notificationDatabase.addItemToDatabase(new Notification(0, NotificationType.REPORT_CREATED, Main.reportsDatabase.getItemID(newReport), LocalDateTime.now()));
 
                 JOptionPane.showMessageDialog(null, "Donos przyjęty, obywatelu! Twoje działania pomagają w budowaniu lepszego społeczeństwa. \nTytuł: " + title + "\n\n", "Donos złożony", JOptionPane.INFORMATION_MESSAGE);
             }

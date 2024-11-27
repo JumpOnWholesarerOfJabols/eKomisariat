@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.utils.NotificationsFilterMethods;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
@@ -48,6 +49,7 @@ public class HomePage extends AbstractPage{
         controlsPanel.add(reportButton);
 
         controlsPanel.add(generateReportsButton(cardLayout, mainPanel));
+        controlsPanel.add(generateNotificationsButton(cardLayout, mainPanel));
 
         spacerPanel.add(controlsPanel);
         rootPanel.add(spacerPanel);
@@ -68,5 +70,19 @@ public class HomePage extends AbstractPage{
         });
 
         return reportsButton;
+    }
+
+    private JButton generateNotificationsButton(CardLayout cardLayout, JPanel mainPanel){
+        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Main.usersDatabase.getUserId(Main.currentUser)));
+        mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");
+
+        JButton notificationsButton = new JButton("Wyświetl powiadomienia");
+        notificationsButton.setPreferredSize(BTN_DIMENSION);
+        notificationsButton.addActionListener(e -> {
+            notificationDisplayPage.changeDisplayedReports(notificationDisplayPage.defaultFilter);
+            cardLayout.show(mainPanel, "notificationDisplayPage");
+        });
+
+        return notificationsButton;
     }
 }
