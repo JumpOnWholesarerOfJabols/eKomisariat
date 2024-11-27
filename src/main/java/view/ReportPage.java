@@ -108,7 +108,7 @@ public class ReportPage extends AbstractPage{
         sendButton.addActionListener(e -> {
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = Database.getInstance().getUsersDatabase().getUserId(Database.getInstance().getCurrentUser());
+            int userID = Database.getInstance().getCurrentUserId();
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);

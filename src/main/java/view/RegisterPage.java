@@ -88,7 +88,7 @@ public class RegisterPage extends AbstractPage{
                     passwordField.setText("");
                     emailField.setText("");
                     JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
-                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getUserId(user), LocalDateTime.now()));
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
                 } else {
                     JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
                 }

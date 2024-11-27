@@ -18,7 +18,7 @@ public class HomePage extends AbstractPage{
             System.exit(0);
         }
 
-        System.out.println("Logged in as user: " + Database.getInstance().getUsersDatabase().getUserId(Database.getInstance().getCurrentUser()));
+        System.out.println("Logged in as user: " + Database.getInstance().getCurrentUserId());
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         rootPanel.setBackground(new Color(50, 150, 200));
 
@@ -74,7 +74,7 @@ public class HomePage extends AbstractPage{
     }
 
     private JButton generateNotificationsButton(CardLayout cardLayout, JPanel mainPanel){
-        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Database.getInstance().getUsersDatabase().getUserId(Database.getInstance().getCurrentUser())));
+        NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Database.getInstance().getCurrentUserId()));
         mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");
 
         JButton notificationsButton = new JButton("Wyświetl powiadomienia");
