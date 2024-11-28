@@ -1,5 +1,6 @@
 package main.java.view;
 import main.java.Main;
+import main.java.database.Database;
 import main.java.database.DatabaseOperations;
 import main.java.model.User;
 import main.java.utils.UsersFilterMethods;
@@ -167,7 +168,7 @@ public class LoginPage extends AbstractPage {
                 .findFirst();
 
         if(userOptional.isPresent() && userOptional.get().getPassword().equals(String.valueOf(passwordField.getPassword()))) {
-            Main.currentUser = userOptional.get();
+            Database.getInstance().setCurrentUser(userOptional.get());
             System.out.println("tu" + userOptional.get());
             return true;
 

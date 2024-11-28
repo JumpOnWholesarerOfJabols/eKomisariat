@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.Report;
@@ -90,8 +91,8 @@ public class ReportTable {
                     int policemanId = Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString());
                     report.setAssignmentWorkerID(policemanId);
 
-                    Main.reportsDatabase.updateItemInDatabase(id, report);
-                    Main.notificationDatabase.addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, id, LocalDateTime.now()));
+                    Database.getInstance().getReportsDatabase().updateItemInDatabase(id, report);
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, id, LocalDateTime.now()));
                 }
             }
         });
