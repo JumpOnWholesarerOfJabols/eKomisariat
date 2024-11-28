@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface FileManager<T> {
@@ -25,7 +27,7 @@ public interface FileManager<T> {
             return p.filter(Files::isRegularFile)
                     .map(Path::toString)
                     .filter(name -> name.endsWith(".dat"))
-                    .toList();
+                    .collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
