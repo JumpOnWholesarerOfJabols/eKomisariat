@@ -35,13 +35,13 @@ public class EditReportDialogAdmin extends JDialog {
         gbc2.anchor = GridBagConstraints.NORTH;
         gbc2.weightx = 0.9;
 
-        JLabel userIdLabel = new JLabel("User Id: ");
+        JLabel userIdLabel = new JLabel("User Id: " + report.getUserId());
         gbc.gridy = 0;
         add(userIdLabel, gbc);
 
-        JTextField userIdField = new JTextField(String.valueOf(report.getUserId()));
+        JLabel empty = new JLabel("");
         gbc2.gridx = 1;
-        add(userIdField, gbc2);
+        add(empty, gbc2);
 
         JLabel titleLabel = new JLabel("Title: ");
         gbc.gridy = 1;
@@ -64,9 +64,10 @@ public class EditReportDialogAdmin extends JDialog {
         gbc.gridy = 3;
         add(assignmentWorkerIdLabel, gbc);
 
-        JTextField assignmentWorkerIdField = new JTextField(String.valueOf(report.getAssignmentWorkerID()));
+        JComboBox<Integer> workerComboBox = new JComboBox<>(getWorkersId());
+        workerComboBox.setSelectedItem(report.getStatus());
         gbc2.gridx = 1;
-        add(assignmentWorkerIdField, gbc2);
+        add(workerComboBox, gbc2);
 
         JLabel statusLabel = new JLabel("Status: ");
         gbc.gridy = 4;
@@ -92,8 +93,8 @@ public class EditReportDialogAdmin extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Report updatedReport = new Report(Integer.parseInt(userIdField.getText()), titleField.getText(), descriptionField.getText());
-                updatedReport.setAssignmentWorkerID(Integer.parseInt(assignmentWorkerIdField.getText()));
+                Report updatedReport = new Report(report.getUserId(), titleField.getText(), descriptionField.getText());
+                updatedReport.setAssignmentWorkerID(report.getAssignmentWorkerID());
                 updatedReport.setStatus((Report.reportStatus) statusComboBox.getSelectedItem());
 
                 Date dateFromField = reportDate.getDate();
@@ -109,6 +110,19 @@ public class EditReportDialogAdmin extends JDialog {
         gbc.gridy = 6;
         add(saveButton, gbc);
 
+        JButton delButton = new JButton("Usuń raport");
+        delButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                //dispose();
+            }
+        });
+
+        gbc.gridy = 7;
+        add(delButton, gbc);
+
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.gridwidth = 2;
@@ -117,5 +131,9 @@ public class EditReportDialogAdmin extends JDialog {
 
         pack();
         setLocationRelativeTo(owner);
+    }
+
+    private Integer[] getWorkersId() {
+        return null;
     }
 }

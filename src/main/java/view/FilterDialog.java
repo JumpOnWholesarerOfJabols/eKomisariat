@@ -54,15 +54,23 @@ public class FilterDialog extends JDialog {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JButton applyButton = new JButton("Zastosuj");
+        JButton clearFilterButton = new JButton("Wyczyść filtry");
         JButton cancelButton = new JButton("Anuluj");
 
         buttonPanel.add(applyButton);
+        buttonPanel.add(clearFilterButton);
         buttonPanel.add(cancelButton);
 
         add(filterPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
         cancelButton.addActionListener(e -> dispose());
+
+        clearFilterButton.addActionListener(e -> {
+            Predicate<Report> emptyFilter = report -> true;
+            filter = emptyFilter;
+            dispose();
+        });
 
         applyButton.addActionListener(e -> {
             Integer userId = userIdField.getText().isEmpty() ? null : Integer.parseInt(userIdField.getText());
