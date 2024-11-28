@@ -15,8 +15,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    // Getters for the fields (optional, if needed later)
-
     public String getEmail() {
         return email;
     }

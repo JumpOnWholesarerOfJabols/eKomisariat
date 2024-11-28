@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.Report;
@@ -107,7 +108,7 @@ public class ReportPage extends AbstractPage{
         sendButton.addActionListener(e -> {
             String title = titleField.getText();
             String description = descriptionField.getText();
-            int userID = Main.usersDatabase.getUserId(Main.currentUser);
+            int userID = Database.getInstance().getCurrentUserId();
 
             if (userID == -1) {
                 JOptionPane.showMessageDialog(null, "Obywatelu, wygląda na to, że Twoja teczka zaginęła! Aby spełniać swoje obywatelskie obowiązki, musisz się najpierw zameldować w systemie!", "BrakTeczkiException", JOptionPane.ERROR_MESSAGE);
@@ -115,8 +116,8 @@ public class ReportPage extends AbstractPage{
                 JOptionPane.showMessageDialog(null, "Wypełnienie pól to obowiązek każdego obywatela! Puste miejsca to tylko przestrzeń dla wrogów społeczeństwa!!", "ZaniedbanieObowiazkuException", JOptionPane.ERROR_MESSAGE);
             } else {
                 Report newReport = new Report(userID, title, description);
-                Main.reportsDatabase.addItemToDatabase(newReport);
-                Main.notificationDatabase.addItemToDatabase(new Notification(0, NotificationType.REPORT_CREATED, Main.reportsDatabase.getItemID(newReport), LocalDateTime.now()));
+                Database.getInstance().getReportsDatabase().addItemToDatabase(newReport);
+                Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.REPORT_CREATED, Database.getInstance().getReportsDatabase().getItemID(newReport), LocalDateTime.now()));
 
                 JOptionPane.showMessageDialog(null, "Donos przyjęty, obywatelu! Twoje działania pomagają w budowaniu lepszego społeczeństwa. \nTytuł: " + title + "\n\n", "Donos złożony", JOptionPane.INFORMATION_MESSAGE);
             }

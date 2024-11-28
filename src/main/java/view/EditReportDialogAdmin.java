@@ -1,7 +1,7 @@
 package main.java.view;
 
 import com.toedter.calendar.JDateChooser;
-import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Report;
 
 import javax.swing.*;
@@ -101,7 +101,7 @@ public class EditReportDialogAdmin extends JDialog {
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
                 updatedReport.setDate(localDate);
-                Main.reportsDatabase.updateItemInDatabase(reportId, updatedReport);
+                Database.getInstance().getReportsDatabase().updateItemInDatabase(reportId, updatedReport);
                 dispose();
             }
         });

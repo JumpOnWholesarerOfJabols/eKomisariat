@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
@@ -87,7 +88,7 @@ public class RegisterPage extends AbstractPage{
                     passwordField.setText("");
                     emailField.setText("");
                     JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
-                    Main.notificationDatabase.addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Main.usersDatabase.getUserId(user), LocalDateTime.now()));
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
                 } else {
                     JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
                 }

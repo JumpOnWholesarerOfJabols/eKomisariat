@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 
@@ -24,12 +25,12 @@ public class NotificationDisplayPage extends AbstractTablePage<Notification> {
 
     public NotificationDisplayPage(Predicate<Notification> defaultFilter) {
         super(defaultFilter);
-        baseReports = new HashMap<>(Main.notificationDatabase.getFiltered(this.defaultFilter));
+        baseReports = new HashMap<>(Database.getInstance().getNotificationDatabase().getFiltered(this.defaultFilter));
         displayedReports = baseReports;
     }
 
     public void changeDisplayedReports(Predicate<Notification> newFilter) {
-        displayedReports = new HashMap<>(Main.notificationDatabase.getFiltered(newFilter));
+        displayedReports = new HashMap<>(Database.getInstance().getNotificationDatabase().getFiltered(newFilter));
         updateReportTable();
     }
 

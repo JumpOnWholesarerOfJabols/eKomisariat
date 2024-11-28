@@ -1,6 +1,6 @@
 package main.java.view;
 
-import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
 
@@ -22,11 +22,11 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
-    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Main.usersDatabase.getAll().keySet().toArray(new Integer[0]));
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
-        baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
+        baseReports = new HashMap<>(Database.getInstance().getReportsDatabase().getFiltered(this.defaultFilter));
         displayedReports = baseReports;
     }
 
@@ -35,7 +35,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     }
 
     public void changeDisplayedReports(Predicate<Report> newFilter) {
-        displayedReports = new HashMap<>(Main.reportsDatabase.getFiltered(newFilter));
+        displayedReports = new HashMap<>(Database.getInstance().getReportsDatabase().getFiltered(newFilter));
         updateReportTable();
     }
 
