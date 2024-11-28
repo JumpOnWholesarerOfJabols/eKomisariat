@@ -1,6 +1,7 @@
 package main.java.view;
 
 import main.java.Main;
+import main.java.database.Database;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
 
@@ -22,11 +23,11 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     protected JPanel buttonPanel;
     protected JButton filterButton;
     protected JButton backButton;
-    protected final JComboBox<Integer> policemanComboBox = new JComboBox<>(Main.usersDatabase.getAll().keySet().toArray(new Integer[0]));
+    protected final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         super(defaultFilter);
-        baseReports = new HashMap<>(Main.reportsDatabase.getFiltered(this.defaultFilter));
+        baseReports = new HashMap<>(Database.getInstance().getReportsDatabase().getFiltered(this.defaultFilter));
         displayedReports = baseReports;
     }
 
@@ -35,7 +36,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     }
 
     public void changeDisplayedReports(Predicate<Report> newFilter) {
-        displayedReports = new HashMap<>(Main.reportsDatabase.getFiltered(newFilter));
+        displayedReports = new HashMap<>(Database.getInstance().getReportsDatabase().getFiltered(newFilter));
         updateReportTable();
     }
 
@@ -67,7 +68,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return reportPanel;
     }
 
-    private JPanel createReportPanel() {
+    protected JPanel createReportPanel() {
         JPanel reportPanel = new JPanel(new GridBagLayout());
         reportPanel.setBackground(new Color(35, 78, 117));
         reportPanel.setMinimumSize(new Dimension(800, 600));

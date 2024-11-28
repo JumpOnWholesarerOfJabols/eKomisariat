@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
@@ -79,8 +80,15 @@ public class RegisterPage extends AbstractPage{
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(isDataValid()) {
-                    User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword()));
+                if (!isEmailUnique()) {
+                    JOptionPane.showMessageDialog(null, "Podany e-mail jest już zajęty!");
+                } else if (isDataValid()) {
+                    User user = new User(
+                            nameField.getText(),
+                            surnameField.getText(),
+                            emailField.getText(),
+                            new String(passwordField.getPassword())
+                    );
                     usersDatabase.addItemToDatabase(user);
                     cardLayout.show(mainPanel, "loginPage");
                     nameField.setText("");
@@ -88,7 +96,9 @@ public class RegisterPage extends AbstractPage{
                     passwordField.setText("");
                     emailField.setText("");
                     JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
-                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(
+                            new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now())
+                    );
                 } else {
                     JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
                 }
@@ -130,6 +140,16 @@ public class RegisterPage extends AbstractPage{
         rootPanel.add(mainRegisterPanel);
 
         return rootPanel;
+    }
+
+    private boolean isEmailUnique() {
+        Map<Integer, User> allExistingUsers = Database.getInstance().getUsersDatabase().getAll();
+        for(User user : allExistingUsers.values()) {
+            if(user.getEmail().equals(emailField.getText())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isDataValid() {
@@ -189,7 +209,7 @@ public class RegisterPage extends AbstractPage{
     }
 
     private boolean isEmailValid() {
-        String email = new String(emailField.getText());
+        String email = emailField.getText();
         return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
     }
 }

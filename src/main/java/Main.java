@@ -49,19 +49,13 @@ public class Main {
 
     private static void testy()
     {
-        String folderPath = "src/main/resources/users/";
-        DatabaseOperations<User> usersDatabase = new UsersDatabase(folderPath);
-
 //        usersDatabase.addItemToDatabase(new User("imie1", "nazwisko1", "x@gmail.com", "123"));
 //        usersDatabase.addItemToDatabase(new User("imie2", "nazwisko2", "y", "123"));
 //        usersDatabase.addItemToDatabase(new User("imie3", "nazwisko3", "z@gmail.com", "321"));
 
-        Map<Integer, User> data = usersDatabase.importDataFromFile();
+        Map<Integer, User> data = Database.getInstance().getUsersDatabase().getAll();
         data.forEach((id, user) -> System.out.println(user));
 
-        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(1, NotificationType.USER_CREATED, 4, LocalDateTime.now()));
-        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(5, NotificationType.REPORT_CREATED, 2, LocalDateTime.now().minusHours(5)));
-        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(21, NotificationType.REPORT_ASSIGNED, 15, LocalDateTime.now().minusDays(21)));
-        Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(9, NotificationType.REPORT_MODIFIED, 3, LocalDateTime.now().minusYears(3)));
+
     }
 }

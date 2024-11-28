@@ -22,7 +22,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         rootPanel.setLayout(cardLayout);
 
         reportPanel = generateReportPage(cardLayout, mainPanel);
-        rootPanel.add(reportPanel, "reportPanel");
+        rootPanel.add(reportPanel);
 
         reportTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -41,13 +41,6 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
         reportPanel = createReportPanel();
         reportPanel.add(contentPanel, new GridBagConstraints());
-        return reportPanel;
-    }
-
-    private JPanel createReportPanel() {
-        JPanel reportPanel = new JPanel(new GridBagLayout());
-        reportPanel.setBackground(new Color(35, 78, 117));
-        reportPanel.setMinimumSize(new Dimension(800, 600));
         return reportPanel;
     }
 
@@ -72,7 +65,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
 
         filterButton.addActionListener(e -> openFilterDialog());
 
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "adminPage"));
 
         buttonPanel.add(filterButton);
         buttonPanel.add(backButton);

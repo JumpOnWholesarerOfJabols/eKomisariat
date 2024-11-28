@@ -5,11 +5,13 @@ import main.java.database.Database;
 import main.java.model.Report;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 
 public class EditReportDialogAdmin extends JDialog {
@@ -65,7 +67,7 @@ public class EditReportDialogAdmin extends JDialog {
         add(assignmentWorkerIdLabel, gbc);
 
         JComboBox<Integer> workerComboBox = new JComboBox<>(getWorkersId());
-        workerComboBox.setSelectedItem(report.getStatus());
+        workerComboBox.setSelectedItem(report.getAssignmentWorkerID());
         gbc2.gridx = 1;
         add(workerComboBox, gbc2);
 
@@ -83,7 +85,7 @@ public class EditReportDialogAdmin extends JDialog {
         add(reportDateLabel, gbc);
 
         LocalDate localDate = report.getDate();
-        Date date = java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         JDateChooser reportDate = new JDateChooser(date);
         gbc2.gridx = 1;
         add(reportDate, gbc2);
@@ -94,7 +96,7 @@ public class EditReportDialogAdmin extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 Report updatedReport = new Report(report.getUserId(), titleField.getText(), descriptionField.getText());
-                updatedReport.setAssignmentWorkerID(report.getAssignmentWorkerID());
+                updatedReport.setAssignmentWorkerID( (Integer) workerComboBox.getSelectedItem());
                 updatedReport.setStatus((Report.reportStatus) statusComboBox.getSelectedItem());
 
                 Date dateFromField = reportDate.getDate();
@@ -115,8 +117,9 @@ public class EditReportDialogAdmin extends JDialog {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                Database.getInstance().getReportsDatabase().removeItemFromDatabase(reportId);
 
-                //dispose();
+                dispose();
             }
         });
 
@@ -134,6 +137,9 @@ public class EditReportDialogAdmin extends JDialog {
     }
 
     private Integer[] getWorkersId() {
-        return null;
+        Integer[] tab = new Integer[0];
+        tab = Database.getInstance().getUsersDatabase().getAll().keySet().toArray(tab);
+        Arrays.stream(tab).forEach(System.out::println);
+        return tab;
     }
 }
