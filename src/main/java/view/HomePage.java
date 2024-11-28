@@ -1,6 +1,5 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.database.Database;
 import main.java.utils.NotificationsFilterMethods;
 import main.java.utils.ReportsFilterMethods;

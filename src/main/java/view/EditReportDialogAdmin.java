@@ -1,7 +1,6 @@
 package main.java.view;
 
 import com.toedter.calendar.JDateChooser;
-import main.java.Main;
 import main.java.database.Database;
 import main.java.model.Report;
 

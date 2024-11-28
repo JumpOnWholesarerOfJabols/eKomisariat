@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class AdminPage {
 
-
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         ReportDisplayPageAdmin reportDisplayPageAdmin = new ReportDisplayPageAdmin(null);
 
