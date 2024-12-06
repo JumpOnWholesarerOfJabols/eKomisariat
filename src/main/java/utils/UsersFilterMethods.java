@@ -10,4 +10,8 @@ public final class UsersFilterMethods {
     public static Predicate<User> filterLoginField(String emailField){
         return user -> user.getEmail().equals(emailField);
     }
+
+    public static Predicate<User> filterPolicemanEmails(String emailField){
+        return user -> user.getEmail().split("@")[1].equals("eKomisariat.pl");
+    }
 }

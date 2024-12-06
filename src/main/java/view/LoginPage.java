@@ -40,29 +40,24 @@ public class LoginPage extends AbstractPage {
         headerPanel.setBackground(BG_COLOR);
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
-        // Create header title label
         JLabel headerTitle = new JLabel("eKomisariat™");
         headerTitle.setFont(new Font("Arial", Font.BOLD, 32));
         headerTitle.setForeground(Color.WHITE);
-        headerTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Align center in BoxLayout
+        headerTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Create a panel for headerTitle and center it
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.setOpaque(false); // Make panel transparent
+        titlePanel.setOpaque(false);
         titlePanel.add(headerTitle);
 
-        // Create header description label
         JLabel headerDesc = new JLabel("Nasze miejsce na Twoją sprawę");
         headerDesc.setFont(new Font("Arial", Font.PLAIN, 22));
         headerDesc.setForeground(Color.WHITE);
-        headerDesc.setAlignmentX(Component.CENTER_ALIGNMENT); // Align center in BoxLayout
+        headerDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Create a panel for headerDesc and center it
         JPanel descPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        descPanel.setOpaque(false); // Make panel transparent
+        descPanel.setOpaque(false);
         descPanel.add(headerDesc);
 
-        // Add both panels to the headerPanel
         headerPanel.add(titlePanel);
         headerPanel.add(descPanel);
 
@@ -77,11 +72,9 @@ public class LoginPage extends AbstractPage {
         mainLoginField.setLayout(new GridBagLayout());
         mainLoginField.setBackground(new Color(81,145,203));
 
-        // Email Field
         JTextField emailField = new JTextField();
         emailField.setBorder(BorderFactory.createTitledBorder("Email"));
 
-        // Password Field
         JPasswordField passwordField = new JPasswordField();
         passwordField.setBorder(BorderFactory.createTitledBorder("Hasło")); // Add title to border
 
@@ -136,7 +129,6 @@ public class LoginPage extends AbstractPage {
             }
         });
 
-        // Add ActionListener for loginButton to switch to newPage
         loginButton.addActionListener(e -> {
             String passwd = new String(passwordField.getPassword());
             if(emailField.getText().equals("admin") && passwd.equals("admin")) {
@@ -144,10 +136,17 @@ public class LoginPage extends AbstractPage {
                 JPanel adminPagePanel = adminPage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(adminPagePanel, "adminPage");
                 cardLayout.show(mainPanel, "adminPage");
-                return;
-            }
-            // Switch to the new page when the login button is clicked
-            if(tryLogIn(emailField, passwordField)) {
+            }else if(emailField.getText().contains("@eKomisariat.pl")) {
+                if(tryLogIn(emailField, passwordField)) {
+                    System.out.println("dziala");
+                    PolicemanPage homePage = new PolicemanPage();
+                    JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
+                    mainPanel.add(homePagePanel, "homePage");
+                    cardLayout.show(mainPanel, "homePage");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Podano błędne dane logowania!");
+                }
+            } else if(tryLogIn(emailField, passwordField)) {
                 HomePage homePage = new HomePage();
                 JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(homePagePanel, "homePage");
@@ -171,7 +170,22 @@ public class LoginPage extends AbstractPage {
             Database.getInstance().setCurrentUser(userOptional.get());
             System.out.println("tu" + userOptional.get());
             return true;
+        }
 
+        return false;
+    }
+
+    private boolean tryLogInPoliceman(JTextField mainLoginField, JPasswordField passwordField) {
+        Optional<User> userOptional = usersDatabase
+                .getFiltered(UsersFilterMethods.filterLoginField(mainLoginField.getText()))
+                .values()
+                .stream()
+                .findFirst();
+
+        if(userOptional.isPresent() && userOptional.get().getPassword().equals(String.valueOf(passwordField.getPassword()))) {
+            Database.getInstance().setCurrentUser(userOptional.get());
+            System.out.println("tu" + userOptional.get());
+            return true;
         }
 
         return false;
