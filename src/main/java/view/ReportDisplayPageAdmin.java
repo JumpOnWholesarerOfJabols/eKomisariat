@@ -3,6 +3,7 @@ package main.java.view;
 import main.java.database.Database;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private final Map<Integer, Report> baseReports;
@@ -22,7 +24,12 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
-    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(
+            Database.getInstance()
+                    .getUsersDatabase()
+                    .getFiltered(UsersFilterMethods.filterPolicemanEmails(null))
+                    .keySet().toArray(new Integer[0])
+    );
 
     public ReportDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
