@@ -1,17 +1,18 @@
 package main.java.model;
 
 public class Policeman extends User{
-    private Department department;
+    private Report assignedReport;
 
-    public Policeman(String name, String surname, String email, String password, Department department) {
+    public Policeman(String name, String surname, String email, String password) {
         super(name, surname, email, password);
-        this.department = department;
-    }
-    public Department getDepartment() {
-        return department;
+        this.assignedReport = null;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public Report getAssignedReport() {
+        return assignedReport;
+    }
+
+    public void setAssignedReport(Report assignedReport) {
+        this.assignedReport = assignedReport;
     }
 }

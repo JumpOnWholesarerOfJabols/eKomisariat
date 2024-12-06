@@ -17,7 +17,7 @@ public class ReportDisplayPagePoliceman extends ReportDisplayPage {
 
             System.out.println("Tekst sprawdzający czy działa");
 
-            ReportDetailsDialogPoliceman detailsDialog = new ReportDetailsDialogPoliceman(null, reportId, report);
+            ReportDetailsDialogPoliceman detailsDialog = new ReportDetailsDialogPoliceman(null, reportId, report, this);
             detailsDialog.setVisible(true);
         }
     }

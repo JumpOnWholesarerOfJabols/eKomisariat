@@ -112,7 +112,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return createdTable;
     }
 
-    private void updateReportTable() {
+    protected void updateReportTable() {
         reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
         reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }

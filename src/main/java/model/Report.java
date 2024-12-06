@@ -1,5 +1,7 @@
 package main.java.model;
 
+import main.java.database.Database;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -7,7 +9,7 @@ import java.util.Date;
 
 public class Report implements Serializable {
 
-    public enum reportStatus{OPEN,ASSIGNED, NEW, COMPLETED, CLOSED}
+    public enum reportStatus{NEW,ASSIGNED, STARTED, POSTPONED, CLOSED, DISMISSED}
 
     private final int userId;
     private String title;
@@ -26,12 +28,13 @@ public class Report implements Serializable {
         this.title = title;
         this.description = description;
         this.assignmentWorkerId = -1;
-        this.status = reportStatus.OPEN;
+        this.status = reportStatus.NEW;
         this.date = LocalDate.now();
     }
 
     public void setDate(LocalDate date) {
         this.date = date;
+        Database.getInstance().getReportsDatabase().updateItemInDatabase(Database.getInstance().getReportsDatabase().getItemID(this),this);
     }
 
     public int getUserId() {
@@ -64,6 +67,7 @@ public class Report implements Serializable {
 
     public void setAssignmentWorkerID(int assignmentWorkerID) {
         this.assignmentWorkerId = assignmentWorkerID;
+        updateInDatabase();
     }
 
     public reportStatus getStatus() {
@@ -72,10 +76,15 @@ public class Report implements Serializable {
 
     public void setStatus(reportStatus status) {
         this.status = status;
+        updateInDatabase();
     }
 
     @Override
     public String toString() {
         return userId + " - " + title + " - " + description;
+    }
+
+    private void updateInDatabase(){
+        Database.getInstance().getReportsDatabase().updateItemInDatabase(Database.getInstance().getReportsDatabase().getItemID(this),this);
     }
 }

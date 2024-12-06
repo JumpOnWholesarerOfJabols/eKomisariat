@@ -7,6 +7,8 @@ import java.awt.*;
 
 public class ReportDetailsDialog extends JDialog {
 
+     protected JButton closeButton = new JButton("Zamknij");
+
     public ReportDetailsDialog(Frame owner, Integer reportId, Report report) {
         super(owner, "Report Details", true);
 
@@ -49,7 +51,6 @@ public class ReportDetailsDialog extends JDialog {
         descriptionPanel.add(scrollPane, BorderLayout.CENTER);
         add(descriptionPanel, BorderLayout.CENTER);
 
-        JButton closeButton = new JButton("Zamknij");
         closeButton.addActionListener(e -> dispose());
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(closeButton);
