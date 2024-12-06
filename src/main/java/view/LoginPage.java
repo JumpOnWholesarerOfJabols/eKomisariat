@@ -1,7 +1,8 @@
 package main.java.view;
-import main.java.Main;
 import main.java.database.Database;
 import main.java.database.DatabaseOperations;
+import main.java.logger.LogEventType;
+import main.java.logger.Logger;
 import main.java.model.User;
 import main.java.utils.UsersFilterMethods;
 
@@ -11,10 +12,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class LoginPage extends AbstractPage {
     private final DatabaseOperations<User> usersDatabase;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public LoginPage(DatabaseOperations<User> usersDatabase) {
         super();
@@ -132,6 +136,7 @@ public class LoginPage extends AbstractPage {
         loginButton.addActionListener(e -> {
             String passwd = new String(passwordField.getPassword());
             if(emailField.getText().equals("admin") && passwd.equals("admin")) {
+                Logger.getInstance().log(LogEventType.ADMIN_LOGIN, formatter.format(LocalDateTime.now()));
                 AdminPage adminPage = new AdminPage();
                 JPanel adminPagePanel = adminPage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(adminPagePanel, "adminPage");
