@@ -1,8 +1,6 @@
 package main.java.view;
 
 import main.java.database.Database;
-import main.java.model.Report;
-import main.java.utils.NotificationsFilterMethods;
 import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
@@ -16,12 +14,8 @@ public class PolicemanPage extends HomePage{
 
     @Override
     protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
-        ReportPage reportPage = new ReportPage();
-        mainPanel.add(reportPage.generatePage(cardLayout, mainPanel), "reportPage");
-
         JButton reportButton = new JButton("Pusty przycisk na przyszłość");
         reportButton.setPreferredSize(BTN_DIMENSION);
-        //reportButton.addActionListener(e -> cardLayout.show(mainPanel, "reportPage"));
         return reportButton;
     }
 

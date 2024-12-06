@@ -1,16 +1,11 @@
 package main.java;
 
 import main.java.database.*;
-import main.java.model.Notification;
-import main.java.model.NotificationType;
-import main.java.model.User;
 import main.java.view.LoginPage;
 import main.java.view.RegisterPage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 public class Main {
 

@@ -1,8 +1,6 @@
 package main.java.database;
 
-import main.java.Main;
 import main.java.model.Notification;
-import main.java.model.Policeman;
 import main.java.model.Report;
 import main.java.model.User;
 

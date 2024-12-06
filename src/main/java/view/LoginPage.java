@@ -139,7 +139,7 @@ public class LoginPage extends AbstractPage {
             }else if(emailField.getText().contains("@eKomisariat.pl")) {
                 if(tryLogIn(emailField, passwordField)) {
                     System.out.println("dziala");
-                    PolicemanPage homePage = new PolicemanPage();
+                    HomePage homePage = new PolicemanPage();
                     JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
                     mainPanel.add(homePagePanel, "homePage");
                     cardLayout.show(mainPanel, "homePage");
@@ -175,19 +175,4 @@ public class LoginPage extends AbstractPage {
         return false;
     }
 
-    private boolean tryLogInPoliceman(JTextField mainLoginField, JPasswordField passwordField) {
-        Optional<User> userOptional = usersDatabase
-                .getFiltered(UsersFilterMethods.filterLoginField(mainLoginField.getText()))
-                .values()
-                .stream()
-                .findFirst();
-
-        if(userOptional.isPresent() && userOptional.get().getPassword().equals(String.valueOf(passwordField.getPassword()))) {
-            Database.getInstance().setCurrentUser(userOptional.get());
-            System.out.println("tu" + userOptional.get());
-            return true;
-        }
-
-        return false;
-    }
 }
