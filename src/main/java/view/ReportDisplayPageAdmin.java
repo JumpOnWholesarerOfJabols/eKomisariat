@@ -122,19 +122,6 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
-    private void openFilterDialog() {
-        FilterDialog filterDialog = new FilterDialog(null, this, null);
-
-        filterDialog.setVisible(true);
-
-        try {
-            currentFilter = filterDialog.getFilter();
-            currentFilter = getFilter(currentFilter);
-            changeDisplayedReports(currentFilter);
-        } catch (NullPointerException e){
-            System.out.println("Nie naciskaj krzyżyka bo nie wiem jak to naprawić aby dzialalo ladnie :DD");
-        }
-    }
 
     private void showEditableReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);

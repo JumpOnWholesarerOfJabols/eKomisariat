@@ -15,14 +15,14 @@ import java.util.function.Predicate;
 
 public class ReportDisplayPage extends AbstractTablePage<Report> {
     private final Map<Integer, Report> baseReports;
-    private Map<Integer, Report> displayedReports;
+    protected Map<Integer, Report> displayedReports;
 
-    private JPanel reportPanel;
-    private JTable reportTable;
-    private JScrollPane scrollPane;
-    private JPanel buttonPanel;
-    private JButton filterButton;
-    private JButton backButton;
+    protected JPanel reportPanel;
+    protected JTable reportTable;
+    protected JScrollPane scrollPane;
+    protected JPanel buttonPanel;
+    protected JButton filterButton;
+    protected JButton backButton;
     private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
@@ -117,7 +117,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
-    private void openFilterDialog() {
+    protected void openFilterDialog() {
         FilterDialog filterDialog = new FilterDialog(null, this, null);
 
         filterDialog.setVisible(true);
@@ -131,7 +131,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         }
     }
 
-    private void showReportDetails(Integer reportId) {
+    protected void showReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);
         if (report != null) {
             ReportDetailsDialog detailsDialog = new ReportDetailsDialog(null, reportId, report);

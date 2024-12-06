@@ -57,14 +57,13 @@ public class PolicemanPage extends AbstractPage{
     }
 
     private JButton generateReportsButton(CardLayout cardLayout, JPanel mainPanel){
-        ReportDisplayPage reportDisplayPage = new ReportDisplayPage
+        ReportDisplayPagePoliceman reportDisplayPage = new ReportDisplayPagePoliceman(
                 (ReportsFilterMethods.combinedFilter(
-                        ReportsFilterMethods.filterUserId(Database.getInstance().getCurrentUserId()),
-                                ReportsFilterMethods.filterStatus(Report.reportStatus.CLOSED)));
+                        ReportsFilterMethods.filterReportAssigmentWorker(Database.getInstance().getCurrentUserId()))));
 
         mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
 
-        JButton reportsButton = new JButton("Moje rozwiązane sprawy");
+        JButton reportsButton = new JButton("Moje sprawy");
         reportsButton.setPreferredSize(BTN_DIMENSION);
         reportsButton.addActionListener(e -> {
             reportDisplayPage.changeDisplayedReports(reportDisplayPage.defaultFilter);
