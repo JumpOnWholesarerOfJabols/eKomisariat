@@ -141,18 +141,13 @@ public class LoginPage extends AbstractPage {
                 JPanel adminPagePanel = adminPage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(adminPagePanel, "adminPage");
                 cardLayout.show(mainPanel, "adminPage");
-            }else if(emailField.getText().contains("@eKomisariat.pl")) {
-                if(tryLogIn(emailField, passwordField)) {
-                    System.out.println("dziala");
-                    HomePage homePage = new PolicemanPage();
-                    JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
-                    mainPanel.add(homePagePanel, "homePage");
-                    cardLayout.show(mainPanel, "homePage");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Podano błędne dane logowania!");
-                }
             } else if(tryLogIn(emailField, passwordField)) {
-                HomePage homePage = new HomePage();
+                HomePage homePage;
+                if (emailField.getText().contains("@eKomisariat.pl"))
+                    homePage = new PolicemanPage();
+                else
+                    homePage = new HomePage();
+
                 JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(homePagePanel, "homePage");
                 cardLayout.show(mainPanel, "homePage");

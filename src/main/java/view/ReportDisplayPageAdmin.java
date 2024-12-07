@@ -27,7 +27,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private final JComboBox<Integer> policemanComboBox = new JComboBox<>(
             Database.getInstance()
                     .getUsersDatabase()
-                    .getFiltered(UsersFilterMethods.filterPolicemanEmails(null))
+                    .getFiltered(UsersFilterMethods.filterPolicemanEmails())
                     .keySet().toArray(new Integer[0])
     );
 

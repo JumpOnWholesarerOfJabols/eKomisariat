@@ -14,7 +14,7 @@ public class PolicemanPage extends HomePage{
 
     @Override
     protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
-        JButton reportButton = new JButton("Pusty przycisk na przyszłość");
+        JButton reportButton = new JButton("Statystyki");
         reportButton.setPreferredSize(BTN_DIMENSION);
         return reportButton;
     }

@@ -34,7 +34,7 @@ public class Report implements Serializable {
 
     public void setDate(LocalDate date) {
         this.date = date;
-        Database.getInstance().getReportsDatabase().updateItemInDatabase(Database.getInstance().getReportsDatabase().getItemID(this),this);
+        updateInDatabase();
     }
 
     public int getUserId() {
