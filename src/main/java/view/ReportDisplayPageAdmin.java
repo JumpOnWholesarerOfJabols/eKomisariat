@@ -22,7 +22,9 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
+    private JButton statsButton;
     private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
+    private final PieChartDialog pieChartDialog = new PieChartDialog();
 
     public ReportDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
@@ -91,12 +93,19 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
 
         filterButton = new JButton("Filtry");
         backButton = new JButton("Powrót");
+        statsButton = new JButton("Statystyki");
 
         filterButton.addActionListener(e -> openFilterDialog());
 
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
 
+        statsButton.addActionListener(e -> {
+            pieChartDialog.updateDatasets();
+            pieChartDialog.setVisible(true);
+        });
+
         buttonPanel.add(filterButton);
+        buttonPanel.add(statsButton);
         buttonPanel.add(backButton);
         contentPanel.add(buttonPanel, BorderLayout.SOUTH);
 
