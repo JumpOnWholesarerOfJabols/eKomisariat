@@ -190,7 +190,7 @@ public class RegisterPage extends AbstractPage{
 
     private boolean isEmailValid() {
         String email = new String(emailField.getText());
-        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$") && !email.contains("@eKomisariat.pl");
     }
 }
 
