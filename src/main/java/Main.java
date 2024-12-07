@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main {
+
     public static void main(String[] args) {
         JFrame f = new JFrame("eKomisariat");
         f.setMinimumSize(new Dimension(1400, 900));
@@ -28,4 +29,6 @@ public class Main {
 
         f.setVisible(true);
     }
+
+
 }

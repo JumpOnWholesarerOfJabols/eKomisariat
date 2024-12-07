@@ -3,6 +3,7 @@ package main.java.view;
 import main.java.database.Database;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private final Map<Integer, Report> baseReports;
@@ -22,9 +24,16 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private JPanel buttonPanel;
     private JButton filterButton;
     private JButton backButton;
+
     private JButton statsButton;
-    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
     private final PieChartDialog pieChartDialog = new PieChartDialog();
+  
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(
+            Database.getInstance()
+                    .getUsersDatabase()
+                    .getFiltered(UsersFilterMethods.filterPolicemanEmails())
+                    .keySet().toArray(new Integer[0])
+    );
 
     public ReportDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
@@ -119,24 +128,11 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         return createdTable;
     }
 
-    private void updateReportTable() {
+    protected void updateReportTable() {
         reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
         reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
-    private void openFilterDialog() {
-        FilterDialog filterDialog = new FilterDialog(null, this, null);
-
-        filterDialog.setVisible(true);
-
-        try {
-            currentFilter = filterDialog.getFilter();
-            currentFilter = getFilter(currentFilter);
-            changeDisplayedReports(currentFilter);
-        } catch (NullPointerException e){
-            System.out.println("Nie naciskaj krzyżyka bo nie wiem jak to naprawić aby dzialalo ladnie :DD");
-        }
-    }
 
     private void showEditableReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);

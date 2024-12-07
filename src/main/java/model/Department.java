@@ -1,5 +1,0 @@
-package main.java.model;
-
-public enum Department {
-    INVESTIGATIONS, CRIMINAL, PREVENTIVE, ROAD_SAFETY, CYBER_SEC, ANTI_TERRORIST, INTERNAL_AFFAIRS
-}
