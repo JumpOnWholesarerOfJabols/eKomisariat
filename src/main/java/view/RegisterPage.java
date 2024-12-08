@@ -1,11 +1,12 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.database.Database;
 import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
+import org.apache.commons.codec.cli.Digest;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public class RegisterPage extends AbstractPage{
     private final DatabaseOperations<User> usersDatabase;
@@ -80,7 +82,10 @@ public class RegisterPage extends AbstractPage{
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(isDataValid()) {
-                    User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), new String(passwordField.getPassword()));
+                    String password = Arrays.toString(passwordField.getPassword());
+                    String hashedPassword = DigestUtils.sha256Hex(password);
+
+                    User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), hashedPassword);
                     usersDatabase.addItemToDatabase(user);
                     cardLayout.show(mainPanel, "loginPage");
                     nameField.setText("");
@@ -108,7 +113,6 @@ public class RegisterPage extends AbstractPage{
 
         });
 
-        //gbc.anchor = GridBagConstraints.CENTER;
         mainRegisterPanel.add(titleField, gbc);
         gbc.gridy = 1;
         mainRegisterPanel.add(nameField, gbc);

@@ -9,5 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="toedter.jcalendar" level="application" />
+    <orderEntry type="library" name="jfreechart-1.5.5" level="application" />
+    <orderEntry type="library" name="jfreechart-1.5.51" level="application" />
+    <orderEntry type="library" name="commons.codec" level="application" />
   </component>
 </module>

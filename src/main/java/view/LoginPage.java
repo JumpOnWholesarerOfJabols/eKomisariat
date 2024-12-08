@@ -160,7 +160,7 @@ public class LoginPage extends AbstractPage {
     }
 
     private boolean tryLogIn(JTextField mainLoginField, JPasswordField passwordField) {
-        Optional<User> userOptional = usersDatabase
+        Optional<User> userOptional = Database.getInstance().getUsersDatabase()
                 .getFiltered(UsersFilterMethods.filterLoginField(mainLoginField.getText()))
                 .values()
                 .stream()
