@@ -78,7 +78,6 @@ public class HomePage extends AbstractPage{
         return logoutButton;
     }
 
-    //domyślnie to jest tworzenie zgłoszenia
     protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
         ReportPage reportPage = new ReportPage();
         mainPanel.add(reportPage.generatePage(cardLayout, mainPanel), "reportPage");
@@ -89,7 +88,6 @@ public class HomePage extends AbstractPage{
         return reportButton;
     }
 
-    //domyślnie to jest wyświetlenie zgłoszeń
     protected JButton secondButton(CardLayout cardLayout, JPanel mainPanel) {
         ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterUserId(Database.getInstance().getCurrentUserId()));
         mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
@@ -104,7 +102,6 @@ public class HomePage extends AbstractPage{
         return reportsButton;
     }
 
-    //domyślnie to są powiadomienia
     protected JButton thirdButton(CardLayout cardLayout, JPanel mainPanel) {
         NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Database.getInstance().getCurrentUserId()));
         mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");

@@ -32,7 +32,6 @@ public class FilterDialog extends JDialog {
         JTextField reportTitleFirstLetterField = new JTextField();
         JComboBox<Report.reportStatus> statusComboBox = new JComboBox<>(Report.reportStatus.values());
 
-        // Zamiast JTextField, używamy JDateChooser
         JDateChooser startDateChooser = new JDateChooser();
         JDateChooser endDateChooser = new JDateChooser();
 
@@ -82,7 +81,6 @@ public class FilterDialog extends JDialog {
             Predicate<Report> startDateFilter = (startDate != null) ? ReportsFilterMethods.filterStartDate(startDate) : report -> true;
             Predicate<Report> endDateFilter = (endDate != null) ? ReportsFilterMethods.filterEndDate(endDate) : report -> true;
 
-            // Łączenie filtrów w jeden
             filter = ReportsFilterMethods.combinedFilter(
                     userIdFilter,
                     titleFilter,
