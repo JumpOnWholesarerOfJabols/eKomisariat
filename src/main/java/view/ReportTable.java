@@ -82,9 +82,8 @@ public class ReportTable {
         });
 
         model.addTableModelListener(e -> {
-            if(e.getType() == TableModelEvent.UPDATE) {
-                // This means the policeman attached to the report was updated
-                if(e.getColumn() == POLICEMAN_COLUMN) {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                if (e.getColumn() == POLICEMAN_COLUMN) {
                     int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
                     Report report = displayedReports.get(id);
 

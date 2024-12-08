@@ -5,19 +5,17 @@ import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
-import org.apache.commons.codec.cli.Digest;
+import main.java.utils.DataValidation;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-public class RegisterPage extends AbstractPage{
+public class RegisterPage extends AbstractPage {
     private final DatabaseOperations<User> usersDatabase;
 
     private JTextField nameField;
@@ -34,167 +32,134 @@ public class RegisterPage extends AbstractPage{
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         rootPanel.setLayout(new GridBagLayout());
+        JPanel mainRegisterPanel = createMainRegisterPanel(cardLayout, mainPanel);
+        rootPanel.add(mainRegisterPanel);
+        return rootPanel;
+    }
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 20, 10, 20);
-
-        JPanel mainRegisterPanel = new JPanel();
-        mainRegisterPanel.setLayout(new GridBagLayout());
+    private JPanel createMainRegisterPanel(CardLayout cardLayout, JPanel mainPanel) {
+        JPanel mainRegisterPanel = new JPanel(new GridBagLayout());
         mainRegisterPanel.setPreferredSize(new Dimension(800, 500));
-        mainRegisterPanel.setBackground(new Color(81,145,203));
+        mainRegisterPanel.setBackground(new Color(81, 145, 203));
 
+        addTitleLabel(mainRegisterPanel);
+        addInputFields(mainRegisterPanel);
+        addPasswordInfoLabel(mainRegisterPanel);
+        addRegisterButton(cardLayout, mainPanel, mainRegisterPanel);
+        addLoginLabel(cardLayout, mainPanel, mainRegisterPanel);
+
+        return mainRegisterPanel;
+    }
+
+    private void addTitleLabel(JPanel panel) {
         JLabel titleField = new JLabel("Rejestracja", SwingConstants.CENTER);
         titleField.setFont(new Font("Arial", Font.BOLD, 28));
-        titleField.setForeground(Color.white);
+        titleField.setForeground(Color.WHITE);
+        GridBagConstraints gbc = createGridBagConstraints(0, 0, 2, GridBagConstraints.HORIZONTAL);
+        panel.add(titleField, gbc);
+    }
 
-        nameField = new JTextField();
-        nameField.setBorder(BorderFactory.createTitledBorder("Imię"));
+    private void addInputFields(JPanel panel) {
+        nameField = createTextField("Imię");
+        surnameField = createTextField("Nazwisko");
+        emailField = createTextField("Email");
+        passwordField = createPasswordField("Hasło");
 
-        surnameField = new JTextField();
-        surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
+        GridBagConstraints gbc = createGridBagConstraints(0, 1, 2, GridBagConstraints.HORIZONTAL);
+        panel.add(nameField, gbc);
+        gbc.gridy = 2;
+        panel.add(surnameField, gbc);
+        gbc.gridy = 3;
+        panel.add(emailField, gbc);
+        gbc.gridy = 4;
+        panel.add(passwordField, gbc);
+    }
 
-        emailField = new JTextField();
-        emailField.setBorder(BorderFactory.createTitledBorder("Email"));
+    private JTextField createTextField(String title) {
+        JTextField textField = new JTextField();
+        textField.setBorder(BorderFactory.createTitledBorder(title));
+        return textField;
+    }
 
-        passwordField = new JPasswordField();
-        passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
+    private JPasswordField createPasswordField(String title) {
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBorder(BorderFactory.createTitledBorder(title));
+        return passwordField;
+    }
 
-        passwordInfoLabel = new JLabel("Hasło musi zawierać minimum 6 znaków, jedną wielką literę i jedną cyfre");
+    private void addPasswordInfoLabel(JPanel panel) {
+        passwordInfoLabel = new JLabel("Hasło musi zawierać minimum 6 znaków, jedną wielką literę i jedną cyfrę");
+        GridBagConstraints gbc = createGridBagConstraints(0, 5, 2, GridBagConstraints.HORIZONTAL);
+        panel.add(passwordInfoLabel, gbc);
+    }
 
+    private void addRegisterButton(CardLayout cardLayout, JPanel mainPanel, JPanel panel) {
         registerButton = new JButton("Zarejestruj się");
         registerButton.setPreferredSize(new Dimension(120, 35));
-
-        passwordField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    registerButton.doClick();
-                }
-            }
-        });
-
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(isDataValid()) {
-                    String password = Arrays.toString(passwordField.getPassword());
-                    String hashedPassword = DigestUtils.sha256Hex(password);
-
-                    User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), hashedPassword);
-                    usersDatabase.addItemToDatabase(user);
-                    cardLayout.show(mainPanel, "loginPage");
-                    nameField.setText("");
-                    surnameField.setText("");
-                    passwordField.setText("");
-                    emailField.setText("");
-                    JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
-                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
-                } else {
-                    JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
-                }
-
+                handleRegisterButtonClick(cardLayout, mainPanel);
             }
         });
 
-        JLabel loginLabel = new JLabel("<html><u>Masz konto? Zaloguj się</u></html>");
-        loginLabel.setForeground(Color.white);
+        GridBagConstraints gbc = createGridBagConstraints(1, 6, 1, GridBagConstraints.EAST);
+        panel.add(registerButton, gbc);
+    }
 
+    private void addLoginLabel(CardLayout cardLayout, JPanel mainPanel, JPanel panel) {
+        JLabel loginLabel = new JLabel("<html><u>Masz konto? Zaloguj się</u></html>");
+        loginLabel.setForeground(Color.WHITE);
         loginLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 cardLayout.show(mainPanel, "loginPage");
             }
-
         });
 
-        mainRegisterPanel.add(titleField, gbc);
-        gbc.gridy = 1;
-        mainRegisterPanel.add(nameField, gbc);
-        gbc.gridy = 2;
-        mainRegisterPanel.add(surnameField, gbc);
-        gbc.gridy = 3;
-        mainRegisterPanel.add(emailField, gbc);
-        gbc.gridy = 4;
-        mainRegisterPanel.add(passwordField, gbc);
-        gbc.gridy = 5;
-        mainRegisterPanel.add(passwordInfoLabel,gbc);
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        gbc.anchor = GridBagConstraints.EAST;
-        mainRegisterPanel.add(registerButton, gbc);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridy = 7;
-        mainRegisterPanel.add(loginLabel, gbc);
-        rootPanel.add(mainRegisterPanel);
+        GridBagConstraints gbc = createGridBagConstraints(0, 7, 2, GridBagConstraints.HORIZONTAL);
+        panel.add(loginLabel, gbc);
+    }
 
-        return rootPanel;
+    private GridBagConstraints createGridBagConstraints(int x, int y, int gridWidth, int fill) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.weightx = 1.0;
+        gbc.gridwidth = gridWidth;
+        gbc.fill = fill;
+        gbc.insets = new Insets(10, 20, 10, 20);
+        return gbc;
+    }
+
+    private void handleRegisterButtonClick(CardLayout cardLayout, JPanel mainPanel) {
+        if (isDataValid()) {
+            String password = Arrays.toString(passwordField.getPassword());
+            String hashedPassword = DigestUtils.sha256Hex(password);
+            User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), hashedPassword);
+            usersDatabase.addItemToDatabase(user);
+            cardLayout.show(mainPanel, "loginPage");
+            resetFields();
+            JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
+        } else {
+            JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
+        }
+    }
+
+    private void resetFields() {
+        nameField.setText("");
+        surnameField.setText("");
+        passwordField.setText("");
+        emailField.setText("");
     }
 
     private boolean isDataValid() {
-        boolean isValid = isNameValid() && isSurnameValid() && isEmailValid() && isPasswordValid();
-
-        if(!isNameValid()) {
-            nameField.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createLineBorder(Color.RED),
-                    "Imię"
-            ));
-        } else {
-            nameField.setBorder(BorderFactory.createTitledBorder("Imię"));
-        }
-
-        if(!isSurnameValid()) {
-            surnameField.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createLineBorder(Color.RED),
-                    "Nazwisko"
-            ));
-        } else {
-            surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
-        }
-
-        if(!isEmailValid()) {
-            emailField.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createLineBorder(Color.RED),
-                    "Email"
-            ));
-        } else {
-            emailField.setBorder(BorderFactory.createTitledBorder("Email"));
-        }
-
-        if(!isPasswordValid()) {
-            passwordField.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createLineBorder(Color.RED),
-                    "Hasło"
-            ));
-        } else {
-            passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
-        }
-
-        return isValid;
+        return DataValidation.isNameValid(nameField.getText())
+                && DataValidation.isNameValid(surnameField.getText())
+                && DataValidation.isEmailValid(emailField.getText())
+                && DataValidation.isPasswordValid(new String(passwordField.getPassword()));
     }
 
-    private boolean isNameValid() {
-        String text = nameField.getText();
-        return text != null && text.matches("[A-Z].{2,}");
-    }
-    private boolean isSurnameValid() {
-        String text = surnameField.getText();
-        return text != null && text.matches("[A-Z].{2,}");
-    }
-
-    private boolean isPasswordValid() {
-        String password = new String(passwordField.getPassword());
-        return password.matches("^(?=.*[A-Z])(?=.*\\d).{6,}$");
-    }
-
-    private boolean isEmailValid() {
-        String email = new String(emailField.getText());
-        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$") && !email.contains("@eKomisariat.pl");
-    }
 }
-

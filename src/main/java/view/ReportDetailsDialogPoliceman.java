@@ -12,12 +12,8 @@ public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
     JButton closeButton = new JButton("Zamknij postępowanie");
     JButton rejectButton = new JButton("Umorz postępowanie");
 
-    private final ReportDisplayPagePoliceman parentPage;
-
     public ReportDetailsDialogPoliceman(Frame owner, Integer reportId, Report report, ReportDisplayPagePoliceman parentPage) {
         super(owner, reportId, report);
-
-        this.parentPage = parentPage;
 
         startButton.addActionListener(e -> {
             report.setStatus(Report.reportStatus.STARTED);
