@@ -23,7 +23,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     protected JPanel buttonPanel;
     protected JButton filterButton;
     protected JButton backButton;
-    protected final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
+    protected final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getPolicemenDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         super(defaultFilter);

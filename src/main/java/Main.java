@@ -35,7 +35,7 @@ public class Main {
         LoginPage loginPage = new LoginPage(Database.getInstance().getUsersDatabase());
         JPanel loginPanel = loginPage.generatePage(cardLayout, mainPanel);
 
-        RegisterPage registerPage = new RegisterPage(Database.getInstance().getUsersDatabase());
+        RegisterPage registerPage = new RegisterPage();
         JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
       
         mainPanel.add(loginPanel, "loginPage");

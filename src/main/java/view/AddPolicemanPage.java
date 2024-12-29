@@ -1,13 +1,12 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.database.Database;
-import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -16,22 +15,12 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public class RegisterPage extends AbstractPage{
+public class AddPolicemanPage extends RegisterPage{
+    private String generatedEmail;
 
-    protected JTextField nameField;
-    protected JTextField surnameField;
-    protected JTextField emailField;
-    protected JPasswordField passwordField;
-    protected JButton registerButton;
-    protected JLabel passwordInfoLabel;
-
-    public RegisterPage() {
-        super();
-    }
-
+    @Override
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         rootPanel.setLayout(new GridBagLayout());
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -45,7 +34,7 @@ public class RegisterPage extends AbstractPage{
         mainRegisterPanel.setPreferredSize(new Dimension(800, 500));
         mainRegisterPanel.setBackground(new Color(81,145,203));
 
-        JLabel titleField = new JLabel("Rejestracja", SwingConstants.CENTER);
+        JLabel titleField = new JLabel("Dodaj policjanta", SwingConstants.CENTER);
         titleField.setFont(new Font("Arial", Font.BOLD, 28));
         titleField.setForeground(Color.white);
 
@@ -54,9 +43,6 @@ public class RegisterPage extends AbstractPage{
 
         surnameField = new JTextField();
         surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
-
-        emailField = new JTextField();
-        emailField.setBorder(BorderFactory.createTitledBorder("Email"));
 
         passwordField = new JPasswordField();
         passwordField.setBorder(BorderFactory.createTitledBorder("Hasło"));
@@ -78,24 +64,24 @@ public class RegisterPage extends AbstractPage{
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                generatedEmail = generateEmail();
                 if (!isEmailUnique()) {
                     JOptionPane.showMessageDialog(null, "Podany e-mail jest już zajęty!");
                 } else if (isDataValid()) {
-                    User user = new User(
+                    User policeman = new User(
                             nameField.getText(),
                             surnameField.getText(),
-                            emailField.getText(),
+                            generatedEmail,
                             new String(passwordField.getPassword())
                     );
-                    Database.getInstance().getUsersDatabase().addItemToDatabase(user);
-                    cardLayout.show(mainPanel, "loginPage");
+                    Database.getInstance().getPolicemenDatabase().addItemToDatabase(policeman);
+                    cardLayout.show(mainPanel, "adminPage");
                     nameField.setText("");
                     surnameField.setText("");
                     passwordField.setText("");
-                    emailField.setText("");
-                    JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
+                    JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie. Wygenerowany email: " + generatedEmail);
                     Database.getInstance().getNotificationDatabase().addItemToDatabase(
-                            new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now())
+                            new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(policeman), LocalDateTime.now())
                     );
                 } else {
                     JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
@@ -104,14 +90,14 @@ public class RegisterPage extends AbstractPage{
             }
         });
 
-        JLabel loginLabel = new JLabel("<html><u>Masz konto? Zaloguj się</u></html>");
-        loginLabel.setForeground(Color.white);
+        JLabel backLabel = new JLabel("<html><u>Wróć</u></html>");
+        backLabel.setForeground(Color.white);
 
-        loginLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        loginLabel.addMouseListener(new MouseAdapter() {
+        backLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        backLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                cardLayout.show(mainPanel, "loginPage");
+                cardLayout.show(mainPanel, "adminPage");
             }
 
         });
@@ -123,35 +109,38 @@ public class RegisterPage extends AbstractPage{
         gbc.gridy = 2;
         mainRegisterPanel.add(surnameField, gbc);
         gbc.gridy = 3;
-        mainRegisterPanel.add(emailField, gbc);
-        gbc.gridy = 4;
         mainRegisterPanel.add(passwordField, gbc);
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         mainRegisterPanel.add(passwordInfoLabel,gbc);
-        gbc.gridy = 6;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.VERTICAL;
         gbc.anchor = GridBagConstraints.EAST;
         mainRegisterPanel.add(registerButton, gbc);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridy = 7;
-        mainRegisterPanel.add(loginLabel, gbc);
+        mainRegisterPanel.add(backLabel, gbc);
         rootPanel.add(mainRegisterPanel);
 
         return rootPanel;
     }
 
     private boolean isEmailUnique() {
-        Map<Integer, User> allExistingUsers = Database.getInstance().getUsersDatabase().getAll();
-        for(User user : allExistingUsers.values()) {
-            if(user.getEmail().equals(emailField.getText())) {
+        Map<Integer, User> policemen = Database.getInstance().getPolicemenDatabase().getAll();
+        for(User policeman : policemen.values()) {
+            if(policeman.getEmail().equals(generatedEmail)) {
                 return false;
             }
         }
+
         return true;
     }
 
+    private String generateEmail() {
+        return nameField.getText() + "." + surnameField.getText() + "@ekomisariat.pl";
+    }
+
     protected boolean isDataValid() {
-        boolean isValid = isNameValid() && isSurnameValid() && isEmailValid() && isPasswordValid();
+        boolean isValid = isNameValid() && isSurnameValid() && isPasswordValid();
 
         if(!isNameValid()) {
             nameField.setBorder(BorderFactory.createTitledBorder(
@@ -171,15 +160,6 @@ public class RegisterPage extends AbstractPage{
             surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
         }
 
-        if(!isEmailValid()) {
-            emailField.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createLineBorder(Color.RED),
-                    "Email"
-            ));
-        } else {
-            emailField.setBorder(BorderFactory.createTitledBorder("Email"));
-        }
-
         if(!isPasswordValid()) {
             passwordField.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createLineBorder(Color.RED),
@@ -191,24 +171,4 @@ public class RegisterPage extends AbstractPage{
 
         return isValid;
     }
-
-    protected boolean isNameValid() {
-        String text = nameField.getText();
-        return text != null && text.matches("[A-Z].{2,}");
-    }
-    protected boolean isSurnameValid() {
-        String text = surnameField.getText();
-        return text != null && text.matches("[A-Z].{2,}");
-    }
-
-    protected boolean isPasswordValid() {
-        String password = new String(passwordField.getPassword());
-        return password.matches("^(?=.*[A-Z])(?=.*\\d).{6,}$");
-    }
-
-    private boolean isEmailValid() {
-        String email = emailField.getText();
-        return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
-    }
 }
-

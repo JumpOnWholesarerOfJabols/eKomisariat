@@ -9,6 +9,7 @@ public class AdminPage {
     private final String adminReportPageName = "adminReportsPage";
     private final String adminUsersPageName = "adminUsersPage";
     private final String adminNotificationPageName = "adminNotificationsPage";
+    private final String adminAddPolicemanPageName = "adminAddPolicemanPage";
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         JPanel adminPanel = new JPanel();
@@ -60,6 +61,7 @@ public class AdminPage {
         JLabel showReports = createNavigationLabel("Pokaż raporty", cardLayout, mainPanel, adminReportPageName);
         JLabel showUsers = createNavigationLabel("Pokaż użytkowników", cardLayout, mainPanel, adminUsersPageName);
         JLabel showNotifications = createNavigationLabel("Pokaż powiadomienia", cardLayout, mainPanel, adminNotificationPageName);
+        JLabel addPoliceman = createNavigationLabel("Dodaj policjanta", cardLayout, mainPanel, adminAddPolicemanPageName);
 
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.gridx = 0;
@@ -73,6 +75,8 @@ public class AdminPage {
         adminMainPanel.add(showUsers, innerGbc);
         innerGbc.gridy++;
         adminMainPanel.add(showNotifications, innerGbc);
+        innerGbc.gridy++;
+        adminMainPanel.add(addPoliceman, innerGbc);
 
         adminPanel.add(adminMainPanel, gbc);
 
@@ -106,13 +110,25 @@ public class AdminPage {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (targetPageName.equals(adminReportPageName)) {
-                    ReportDisplayPageAdmin reportDisplayPageAdmin = new ReportDisplayPageAdmin(null);
-                    JPanel adminPanel = reportDisplayPageAdmin.generatePage(cardLayout, mainPanel);
-                    mainPanel.add(adminPanel, targetPageName);
-                    cardLayout.show(mainPanel, targetPageName);
-                } else if (targetPageName.equals(adminNotificationPageName)) {
-
+                switch (targetPageName) {
+                    case adminReportPageName -> {
+                        ReportDisplayPageAdmin reportDisplayPageAdmin = new ReportDisplayPageAdmin(null);
+                        JPanel adminPanel = reportDisplayPageAdmin.generatePage(cardLayout, mainPanel);
+                        mainPanel.add(adminPanel, targetPageName);
+                        cardLayout.show(mainPanel, targetPageName);
+                    }
+                    case adminUsersPageName -> {
+                        UserDisplayPageAdmin userDisplayPageAdmin = new UserDisplayPageAdmin(null);
+                        JPanel userPanel = userDisplayPageAdmin.generatePage(cardLayout, mainPanel);
+                        mainPanel.add(userPanel, targetPageName);
+                        cardLayout.show(mainPanel, targetPageName);
+                    }
+                    case adminAddPolicemanPageName -> {
+                        AddPolicemanPage addPolicemanPage = new AddPolicemanPage();
+                        JPanel addPolicemanPanel = addPolicemanPage.generatePage(cardLayout, mainPanel);
+                        mainPanel.add(addPolicemanPanel, targetPageName);
+                        cardLayout.show(mainPanel, targetPageName);
+                    }
                 }
             }
         });

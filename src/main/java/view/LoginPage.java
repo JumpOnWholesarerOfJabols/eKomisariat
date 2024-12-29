@@ -146,8 +146,17 @@ public class LoginPage extends AbstractPage {
                 cardLayout.show(mainPanel, "adminPage");
                 return;
             }
-            // Switch to the new page when the login button is clicked
-            if(tryLogIn(emailField, passwordField)) {
+            if(emailField.getText().contains("@ekomisariat")) {
+                if(tryPolicemanLogIn(emailField, passwordField)) {
+                    PolicemanPage policemanPage = new PolicemanPage();
+                    JPanel policemanPanel = policemanPage.generatePage(cardLayout, mainPanel);
+                    mainPanel.add(policemanPanel, "policemanPage");
+                    cardLayout.show(mainPanel, "policemanPage");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Podano błędne dane logowania policjanta!");
+                }
+
+            } else if (tryLogIn(emailField, passwordField)) {
                 HomePage homePage = new HomePage();
                 JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
                 mainPanel.add(homePagePanel, "homePage");
@@ -158,6 +167,20 @@ public class LoginPage extends AbstractPage {
         });
 
         return rootPanel;
+    }
+
+    private boolean tryPolicemanLogIn(JTextField mainLoginField, JPasswordField passwordField) {
+        Optional<User> policemanOptional = Database.getInstance()
+                .getPolicemenDatabase()
+                .getFiltered(UsersFilterMethods.filterLoginField(mainLoginField.getText()))
+                .values()
+                .stream()
+                .findFirst();
+        if (policemanOptional.isPresent() && policemanOptional.get().getPassword().equals(String.valueOf(passwordField.getPassword()))) {
+            Database.getInstance().setCurrentUser(policemanOptional.get());
+            return true;
+        }
+        return false;
     }
 
     private boolean tryLogIn(JTextField mainLoginField, JPasswordField passwordField) {

@@ -11,14 +11,17 @@ public class Database {
     private static final String usersFolderPath = "src/main/resources/users/";
     private static final String reportsFolderPath = "src/main/resources/reports/";
     private static final String notificationFolderPath = "src/main/resources/notifications/";
+    private static final String policemenFolderPath = "src/main/resources/policemen/";
     private final FileDatabase<Report> reportsDatabase;
     private final FileDatabase<User> usersDatabase;
     private final FileDatabase<Notification> notificationDatabase;
+    private final FileDatabase<User> policemenDatabase;
 
     private Database() {
         this.reportsDatabase = new FileDatabase<>(reportsFolderPath);
         this.usersDatabase = new FileDatabase<>(usersFolderPath);
         this.notificationDatabase = new FileDatabase<>(notificationFolderPath);
+        this.policemenDatabase = new FileDatabase<>(policemenFolderPath);
     }
 
     public User getCurrentUser() {
@@ -44,6 +47,10 @@ public class Database {
 
     public FileDatabase<Notification> getNotificationDatabase() {
         return notificationDatabase;
+    }
+
+    public FileDatabase<User> getPolicemenDatabase() {
+        return policemenDatabase;
     }
 
     public static Database getInstance() {
