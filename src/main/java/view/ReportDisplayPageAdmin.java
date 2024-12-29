@@ -77,13 +77,6 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         return reportPanel;
     }
 
-    private JPanel createReportPanel() {
-        JPanel reportPanel = new JPanel(new GridBagLayout());
-        reportPanel.setBackground(new Color(35, 78, 117));
-        reportPanel.setMinimumSize(new Dimension(800, 600));
-        return reportPanel;
-    }
-
     private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
@@ -106,7 +99,7 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
 
         filterButton.addActionListener(e -> openFilterDialog());
 
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "adminPage"));
 
         statsButton.addActionListener(e -> {
             pieChartDialog.updateDatasets();

@@ -11,14 +11,11 @@ public final class Database {
     private static final String USERS_FOLDER_PATH = "src/main/resources/users/";
     private static final String REPORTS_FOLDER_PATH = "src/main/resources/reports/";
     private static final String NOTIFICATION_FOLDER_PATH = "src/main/resources/notifications/";
-    private static final String policemenFolderPath = "src/main/resources/policemen/";
     private final FileDatabase<Report> reportsDatabase;
     private final FileDatabase<User> usersDatabase;
     private final FileDatabase<Notification> notificationDatabase;
-    private final FileDatabase<User> policemenDatabase;
 
     private Database() {
-        this.policemenDatabase = new FileDatabase<>(policemenFolderPath);
         this.reportsDatabase = new FileDatabase<>(REPORTS_FOLDER_PATH);
         this.usersDatabase = new FileDatabase<>(USERS_FOLDER_PATH);
         this.notificationDatabase = new FileDatabase<>(NOTIFICATION_FOLDER_PATH);
@@ -47,10 +44,6 @@ public final class Database {
 
     public FileDatabase<Notification> getNotificationDatabase() {
         return notificationDatabase;
-    }
-
-    public FileDatabase<User> getPolicemenDatabase() {
-        return policemenDatabase;
     }
 
     public static Database getInstance() {

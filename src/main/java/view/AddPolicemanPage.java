@@ -1,9 +1,11 @@
 package main.java.view;
 
 import main.java.database.Database;
+import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.swing.*;
 import javax.xml.crypto.Data;
@@ -13,10 +15,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Map;
+
+import static main.java.utils.DataValidation.isNameValid;
+import static main.java.utils.DataValidation.isPasswordValid;
 
 public class AddPolicemanPage extends RegisterPage{
     private String generatedEmail;
+
+    public AddPolicemanPage(DatabaseOperations<User> usersDatabase) {
+        super(usersDatabase);
+    }
 
     @Override
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
@@ -68,13 +78,15 @@ public class AddPolicemanPage extends RegisterPage{
                 if (!isEmailUnique()) {
                     JOptionPane.showMessageDialog(null, "Podany e-mail jest już zajęty!");
                 } else if (isDataValid()) {
+                    String password = Arrays.toString(passwordField.getPassword());
+                    String hashedPassword = DigestUtils.sha256Hex(password);
                     User policeman = new User(
                             nameField.getText(),
                             surnameField.getText(),
                             generatedEmail,
-                            new String(passwordField.getPassword())
+                            hashedPassword
                     );
-                    Database.getInstance().getPolicemenDatabase().addItemToDatabase(policeman);
+                    Database.getInstance().getUsersDatabase().addItemToDatabase(policeman);
                     cardLayout.show(mainPanel, "adminPage");
                     nameField.setText("");
                     surnameField.setText("");
@@ -125,7 +137,7 @@ public class AddPolicemanPage extends RegisterPage{
     }
 
     private boolean isEmailUnique() {
-        Map<Integer, User> policemen = Database.getInstance().getPolicemenDatabase().getAll();
+        Map<Integer, User> policemen = Database.getInstance().getUsersDatabase().getAll();
         for(User policeman : policemen.values()) {
             if(policeman.getEmail().equals(generatedEmail)) {
                 return false;
@@ -136,13 +148,13 @@ public class AddPolicemanPage extends RegisterPage{
     }
 
     private String generateEmail() {
-        return nameField.getText() + "." + surnameField.getText() + "@ekomisariat.pl";
+        return nameField.getText() + "." + surnameField.getText() + "@eKomisariat.pl";
     }
 
     protected boolean isDataValid() {
-        boolean isValid = isNameValid() && isSurnameValid() && isPasswordValid();
+        boolean isValid = isNameValid(nameField.getText()) && isNameValid(surnameField.getText()) && isPasswordValid(new String(passwordField.getPassword()));
 
-        if(!isNameValid()) {
+        if(!isNameValid(nameField.getText())) {
             nameField.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createLineBorder(Color.RED),
                     "Imię"
@@ -151,7 +163,7 @@ public class AddPolicemanPage extends RegisterPage{
             nameField.setBorder(BorderFactory.createTitledBorder("Imię"));
         }
 
-        if(!isSurnameValid()) {
+        if(!isNameValid(nameField.getText())) {
             surnameField.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createLineBorder(Color.RED),
                     "Nazwisko"
@@ -160,7 +172,7 @@ public class AddPolicemanPage extends RegisterPage{
             surnameField.setBorder(BorderFactory.createTitledBorder("Nazwisko"));
         }
 
-        if(!isPasswordValid()) {
+        if(!isPasswordValid(nameField.getText())) {
             passwordField.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createLineBorder(Color.RED),
                     "Hasło"

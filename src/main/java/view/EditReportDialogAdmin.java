@@ -3,6 +3,7 @@ package main.java.view;
 import com.toedter.calendar.JDateChooser;
 import main.java.database.Database;
 import main.java.model.Report;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import javax.xml.crypto.Data;
@@ -138,7 +139,7 @@ public class EditReportDialogAdmin extends JDialog {
 
     private Integer[] getWorkersId() {
         Integer[] tab = new Integer[0];
-        tab = Database.getInstance().getUsersDatabase().getAll().keySet().toArray(tab);
+        tab = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails()).keySet().toArray(tab);
         Arrays.stream(tab).forEach(System.out::println);
         return tab;
     }

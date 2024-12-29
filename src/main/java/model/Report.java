@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Report implements Serializable {
 
-    public enum reportStatus{NEW,ASSIGNED, STARTED, POSTPONED, CLOSED, DISMISSED}
+    public enum reportStatus{NEW, ASSIGNED, STARTED, POSTPONED, CLOSED, DISMISSED, OPEN}
 
     private final int userId;
     private String title;

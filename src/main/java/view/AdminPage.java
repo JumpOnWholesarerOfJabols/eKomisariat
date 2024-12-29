@@ -1,5 +1,7 @@
 package main.java.view;
 
+import main.java.database.Database;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -124,7 +126,7 @@ public class AdminPage {
                         cardLayout.show(mainPanel, targetPageName);
                     }
                     case adminAddPolicemanPageName -> {
-                        AddPolicemanPage addPolicemanPage = new AddPolicemanPage();
+                        AddPolicemanPage addPolicemanPage = new AddPolicemanPage(Database.getInstance().getUsersDatabase());
                         JPanel addPolicemanPanel = addPolicemanPage.generatePage(cardLayout, mainPanel);
                         mainPanel.add(addPolicemanPanel, targetPageName);
                         cardLayout.show(mainPanel, targetPageName);

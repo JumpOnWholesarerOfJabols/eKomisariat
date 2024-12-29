@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class ReportDisplayPage extends AbstractTablePage<Report> {
-    private final Map<Integer, Report> baseReports;
+    protected final Map<Integer, Report> baseReports;
     protected Map<Integer, Report> displayedReports;
 
     protected JPanel reportPanel;
@@ -23,6 +23,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     protected JPanel buttonPanel;
     protected JButton filterButton;
     protected JButton backButton;
+
     private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
@@ -68,7 +69,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return reportPanel;
     }
 
-    private JPanel createReportPanel() {
+    protected JPanel createReportPanel() {
         JPanel reportPanel = new JPanel(new GridBagLayout());
         reportPanel.setBackground(new Color(35, 78, 117));
         reportPanel.setMinimumSize(new Dimension(800, 600));
