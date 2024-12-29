@@ -206,4 +206,5 @@ public class UsersDatabase implements DatabaseOperations<User> {
             }
         }
     }
+
 }

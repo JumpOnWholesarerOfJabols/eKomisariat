@@ -1,32 +1,36 @@
 package main.java.view;
 
 import main.java.database.Database;
+import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PolicemanPage extends AbstractPage{
+public class PolicemanPage extends HomePage{
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
+        return super.generatePage(cardLayout,mainPanel);
+    }
 
-        System.out.println("Logged in as user: " + Database.getInstance().getCurrentUserId());
-        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
-        rootPanel.setBackground(new Color(50, 150, 200));
+    @Override
+    protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
+        JButton reportButton = new JButton("Statystyki");
+        reportButton.setPreferredSize(BTN_DIMENSION);
+        return reportButton;
+    }
 
-        String welcome = "Witaj ".concat(Database.getInstance().getCurrentUser().getName());
+    @Override
+    protected JButton secondButton(CardLayout cardLayout, JPanel mainPanel) {
+        ReportDisplayPage reportDisplayPage = new ReportDisplayPagePoliceman(ReportsFilterMethods.filterReportAssigmentWorker(Database.getInstance().getCurrentUserId()));
+        mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
 
-        JLabel welcomeLabel = new JLabel(welcome);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        welcomeLabel.setForeground(Color.WHITE);
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rootPanel.add(welcomeLabel);
+        JButton reportsButton = new JButton("Przypisane zgłoszenia");
+        reportsButton.setPreferredSize(BTN_DIMENSION);
+        reportsButton.addActionListener(e -> {
+            reportDisplayPage.changeDisplayedReports(reportDisplayPage.defaultFilter);
+            cardLayout.show(mainPanel, "reportDisplayPage");
+        });
 
-        JButton logoutButton = new JButton("Wyloguj");
-        logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
-        logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rootPanel.add(logoutButton);
-
-
-        return rootPanel;
+        return reportsButton;
     }
 }

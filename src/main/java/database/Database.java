@@ -4,13 +4,13 @@ import main.java.model.Notification;
 import main.java.model.Report;
 import main.java.model.User;
 
-public class Database {
+public final class Database {
     private static Database instance;
     private User currentUser;
     private int currentUserId;
-    private static final String usersFolderPath = "src/main/resources/users/";
-    private static final String reportsFolderPath = "src/main/resources/reports/";
-    private static final String notificationFolderPath = "src/main/resources/notifications/";
+    private static final String USERS_FOLDER_PATH = "src/main/resources/users/";
+    private static final String REPORTS_FOLDER_PATH = "src/main/resources/reports/";
+    private static final String NOTIFICATION_FOLDER_PATH = "src/main/resources/notifications/";
     private static final String policemenFolderPath = "src/main/resources/policemen/";
     private final FileDatabase<Report> reportsDatabase;
     private final FileDatabase<User> usersDatabase;
@@ -18,10 +18,10 @@ public class Database {
     private final FileDatabase<User> policemenDatabase;
 
     private Database() {
-        this.reportsDatabase = new FileDatabase<>(reportsFolderPath);
-        this.usersDatabase = new FileDatabase<>(usersFolderPath);
-        this.notificationDatabase = new FileDatabase<>(notificationFolderPath);
         this.policemenDatabase = new FileDatabase<>(policemenFolderPath);
+        this.reportsDatabase = new FileDatabase<>(REPORTS_FOLDER_PATH);
+        this.usersDatabase = new FileDatabase<>(USERS_FOLDER_PATH);
+        this.notificationDatabase = new FileDatabase<>(NOTIFICATION_FOLDER_PATH);
     }
 
     public User getCurrentUser() {

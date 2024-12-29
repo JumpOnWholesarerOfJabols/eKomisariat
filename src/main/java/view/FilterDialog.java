@@ -32,7 +32,6 @@ public class FilterDialog extends JDialog {
         JTextField reportTitleFirstLetterField = new JTextField();
         JComboBox<Report.reportStatus> statusComboBox = new JComboBox<>(Report.reportStatus.values());
 
-        // Zamiast JTextField, używamy JDateChooser
         JDateChooser startDateChooser = new JDateChooser();
         JDateChooser endDateChooser = new JDateChooser();
 
@@ -79,11 +78,9 @@ public class FilterDialog extends JDialog {
             Integer assignmentWorkerId = assignmentWorkerField.getText().isEmpty() ? null : Integer.parseInt(assignmentWorkerField.getText());
             Report.reportStatus status = (Report.reportStatus) statusComboBox.getSelectedItem();
 
-            // Zamiana daty z JDateChooser na LocalDate
             LocalDate startDate = getDateFromChooser(startDateChooser);
             LocalDate endDate = getDateFromChooser(endDateChooser);
 
-            // Tworzenie pustych filtrów, które będą ignorowane, jeśli pole jest puste
             Predicate<Report> userIdFilter = (userId != null) ? ReportsFilterMethods.filterUserId(userId) : report -> true;
             Predicate<Report> titleFilter = (reportTitle != null && !reportTitle.isEmpty()) ? ReportsFilterMethods.filterReportTitle(reportTitle) : report -> true;
             Predicate<Report> firstLetterFilter = (firstLetter != null) ? ReportsFilterMethods.filterReportTitleFirstLetter(firstLetter) : report -> true;
@@ -92,7 +89,6 @@ public class FilterDialog extends JDialog {
             Predicate<Report> startDateFilter = (startDate != null) ? ReportsFilterMethods.filterStartDate(startDate) : report -> true;
             Predicate<Report> endDateFilter = (endDate != null) ? ReportsFilterMethods.filterEndDate(endDate) : report -> true;
 
-            // Łączenie filtrów w jeden
             filter = ReportsFilterMethods.combinedFilter(
                     userIdFilter,
                     titleFilter,
@@ -110,7 +106,7 @@ public class FilterDialog extends JDialog {
 
     private LocalDate getDateFromChooser(JDateChooser dateChooser) {
         if (dateChooser.getDate() == null) {
-            return null; // Return null if no date is selected
+            return null;
         }
         return dateChooser.getDate().toInstant()
                 .atZone(ZoneId.systemDefault())

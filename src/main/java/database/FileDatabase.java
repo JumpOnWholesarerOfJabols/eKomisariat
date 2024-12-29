@@ -1,5 +1,7 @@
 package main.java.database;
 
+import main.java.logger.LogEventType;
+import main.java.logger.Logger;
 import main.java.utils.FileManager;
 
 import java.io.*;
@@ -11,13 +13,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class FileDatabase<T> implements DatabaseOperations<T>{
-    private final DatabaseFileManager policemenFileManager;
-    private int ID = 1;
+    private final FileManager<T> fileManager;
+    private int lastItemID = 1;
 
     private final Map<Integer, T> data;
 
     public FileDatabase(String folderPath) {
-        this.policemenFileManager = new DatabaseFileManager(folderPath);
+        this.fileManager = new DatabaseFileManager(folderPath);
         data = importDataFromFile();
     }
 
@@ -27,32 +29,31 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
 
     @Override
     public Map<Integer, T> importDataFromFile() {
-        Map<Integer, T> map = policemenFileManager.importDatabase();
-        ID = map.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
-
+        Map<Integer, T> map = fileManager.importDatabase();
+        lastItemID = map.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
         return map;
     }
 
     @Override
     public void exportDataToFile() {
-        policemenFileManager.exportDatabase(data);
+        fileManager.exportDatabase(data);
     }
 
     @Override
     public void addItemToDatabase(T item) {
-        addItemToDatabase(ID++, item);
+        addItemToDatabase(lastItemID++, item);
     }
 
     @Override
     public void addItemToDatabase(int id, T item) {
         data.put(id, item);
-        policemenFileManager.exportItem(id, item);
+        fileManager.exportItem(id, item);
     }
 
     @Override
     public void removeItemFromDatabase(int id) {
         data.remove(id);
-        policemenFileManager.deleteItem(id);
+        fileManager.deleteItem(id);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
     @Override
     public void clearDatabase() {
         data.clear();
-        policemenFileManager.clearDatabase();
+        fileManager.clearDatabase();
     }
 
     @Override
@@ -128,6 +129,7 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
 
         @Override
         public Map<Integer, T> importDatabase() {
+            Logger.getInstance().log(LogEventType.DATABASE_LOADED, path);
             this.filesList = importFilesList(path);
 
             return filesList.isEmpty() ? new HashMap<>() : filesList.stream().map(this::importItem)
@@ -137,6 +139,7 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
         @Override
         public void exportDatabase(Map<Integer, T> data) {
             data.forEach(this::exportItem);
+            Logger.getInstance().log(LogEventType.DATABASE_EXPORTED, path);
         }
 
         @Override
@@ -153,9 +156,10 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
 
             try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(userPath.toFile()))) {
                 out.writeObject(item);
+                Logger.getInstance().log(LogEventType.ITEM_EXPORTED, userPath.toString());
 
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -164,17 +168,17 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
             Path userPath = Paths.get(path);
 
             if (!Files.exists(userPath)) {
-                //logi - że brak pliku
+                Logger.getInstance().log(LogEventType.FILE_NOT_FOUND, userPath.toString());
                 return null;
             }
 
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(userPath.toFile()))) {
                 T user = (T) in.readObject();
                 int id = getIdFromFilePath(path);
+
                 return new AbstractMap.SimpleEntry<>(id, user);
-                //logi - wczytano item
             } catch (IOException | ClassNotFoundException e) {
-                //logi - blad podczas wczytywania itemu
+                e.printStackTrace();
                 return null;
             }
         }
@@ -184,16 +188,16 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
             Path reportPath = Paths.get(getFilePathFromId(id));
 
             if (!Files.exists(reportPath)) {
-                //logi - że brak pliku
+                Logger.getInstance().log(LogEventType.FILE_NOT_FOUND, reportPath.toString());
                 return;
             }
 
             try {
                 Files.delete(reportPath);
-                filesList.remove(path.toString());
-                //logi ze usuwamy plik
+                filesList.remove(reportPath.toString());
+                Logger.getInstance().log(LogEventType.FILE_DELETED, reportPath.toString());
             } catch (IOException e) {
-                // logi ze jakiś blad
+                e.printStackTrace();
             }
         }
     }

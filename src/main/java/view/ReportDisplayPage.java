@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class ReportDisplayPage extends AbstractTablePage<Report> {
-    protected final Map<Integer, Report> baseReports;
+    private final Map<Integer, Report> baseReports;
     protected Map<Integer, Report> displayedReports;
 
     protected JPanel reportPanel;
@@ -23,7 +23,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     protected JPanel buttonPanel;
     protected JButton filterButton;
     protected JButton backButton;
-    protected final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getPolicemenDatabase().getAll().keySet().toArray(new Integer[0]));
+    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         super(defaultFilter);
@@ -68,7 +68,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return reportPanel;
     }
 
-    protected JPanel createReportPanel() {
+    private JPanel createReportPanel() {
         JPanel reportPanel = new JPanel(new GridBagLayout());
         reportPanel.setBackground(new Color(35, 78, 117));
         reportPanel.setMinimumSize(new Dimension(800, 600));
@@ -105,14 +105,14 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return contentPanel;
     }
 
-    protected JTable createReportTable() {
+    private JTable createReportTable() {
         ReportTable reportTableCreator = new ReportTable(displayedReports, editEnabled);
         JTable createdTable = reportTableCreator.createTable();
         createdTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
         return createdTable;
     }
 
-    private void updateReportTable() {
+    protected void updateReportTable() {
         reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
         reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
@@ -131,11 +131,19 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         }
     }
 
-    private void showReportDetails(Integer reportId) {
+    protected void showReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);
         if (report != null) {
             ReportDetailsDialog detailsDialog = new ReportDetailsDialog(null, reportId, report);
             detailsDialog.setVisible(true);
         }
+    }
+
+    private JScrollPane createScrollPane(JTextArea descriptionField) {
+        JScrollPane scrollPane = new JScrollPane(descriptionField);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(900, 200));
+        scrollPane.setMinimumSize(new Dimension(700, 200));
+        return scrollPane;
     }
 }
