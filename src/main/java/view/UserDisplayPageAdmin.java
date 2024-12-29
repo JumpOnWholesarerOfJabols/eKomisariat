@@ -3,6 +3,7 @@ package main.java.view;
 import main.java.database.Database;
 import main.java.model.Report;
 import main.java.model.User;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,10 +14,11 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class UserDisplayPageAdmin extends ReportDisplayPage{
+    private boolean filterSwitch = false;
     Map<Integer, User> displayedUsers;
     public UserDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
-        displayedUsers = Database.getInstance().getUsersDatabase().getAll();
+        displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterUsersEmails());
     }
 
     public void changeDisplayedUsers(Predicate<User> newFilter) {
@@ -72,10 +74,25 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         backButton = new JButton("Powrót");
+        filterButton = new JButton("Policjant");
 
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "adminPage"));
+        filterButton.addActionListener( e -> {
+            if(filterSwitch) {
+                displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterUsersEmails());
+                filterSwitch = false;
+                filterButton.setText("Policjant");
+            } else {
+                displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails());
+                filterSwitch = true;
+                filterButton.setText("Użytkownik");
+            }
+            updateUserTable();
+
+        });
 
         buttonPanel.add(backButton);
+        buttonPanel.add(filterButton);
         contentPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         return contentPanel;

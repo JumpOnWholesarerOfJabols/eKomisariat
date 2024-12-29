@@ -14,4 +14,7 @@ public final class UsersFilterMethods {
     public static Predicate<User> filterPolicemanEmails(){
         return user -> user.getEmail().contains("eKomisariat.pl");
     }
+    public static Predicate<User> filterUsersEmails(){
+        return user -> !user.getEmail().contains("eKomisariat.pl");
+    }
 }

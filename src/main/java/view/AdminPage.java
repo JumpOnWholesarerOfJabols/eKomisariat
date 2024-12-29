@@ -131,6 +131,12 @@ public class AdminPage {
                         mainPanel.add(addPolicemanPanel, targetPageName);
                         cardLayout.show(mainPanel, targetPageName);
                     }
+                    case adminNotificationPageName -> {
+                        NotificationDisplayPageAdmin notificationDisplayPage = new NotificationDisplayPageAdmin(null);
+                        JPanel notificationPanel = notificationDisplayPage.generatePage(cardLayout, mainPanel);
+                        mainPanel.add(notificationPanel, targetPageName);
+                        cardLayout.show(mainPanel, targetPageName);
+                    }
                 }
             }
         });
