@@ -18,7 +18,7 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
     Map<Integer, User> displayedUsers;
     public UserDisplayPageAdmin(Predicate<Report> defaultFilter) {
         super(defaultFilter);
-        displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterUsersEmails());
+        displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails().negate());
     }
 
     public void changeDisplayedUsers(Predicate<User> newFilter) {
@@ -79,7 +79,7 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "adminPage"));
         filterButton.addActionListener( e -> {
             if(filterSwitch) {
-                displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterUsersEmails());
+                displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails().negate());
                 filterSwitch = false;
                 filterButton.setText("Policjant");
             } else {
