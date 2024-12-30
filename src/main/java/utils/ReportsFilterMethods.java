@@ -29,7 +29,7 @@ public final class ReportsFilterMethods {
     }
 
     public static Predicate<Report> filterStartDate(LocalDate startDate) {
-        return report -> report.getDate().isAfter(startDate);
+        return report -> !report.getDate().isBefore(startDate);
     }
 
     public static Predicate<Report> filterEndDate(LocalDate endDate) {

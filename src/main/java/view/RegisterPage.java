@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class RegisterPage extends AbstractPage {
-    private final DatabaseOperations<User> usersDatabase;
+    protected final DatabaseOperations<User> usersDatabase;
 
-    private JTextField nameField;
-    private JTextField surnameField;
-    private JTextField emailField;
-    private JPasswordField passwordField;
-    private JButton registerButton;
-    private JLabel passwordInfoLabel;
+    protected JTextField nameField;
+    protected JTextField surnameField;
+    protected JTextField emailField;
+    protected JPasswordField passwordField;
+    protected JButton registerButton;
+    protected JLabel passwordInfoLabel;
 
     public RegisterPage(DatabaseOperations<User> usersDatabase) {
         super();

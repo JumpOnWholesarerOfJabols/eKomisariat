@@ -1,7 +1,5 @@
 package main.java.view;
 
-import main.java.Main;
-import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 
@@ -9,29 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Predicate;
 
-public class NotificationDisplayPage extends AbstractTablePage<Notification> {
-    protected final Map<Integer, Notification> baseReports;
-    protected Map<Integer, Notification> displayedReports;
+public class NotificationDisplayPageAdmin extends NotificationDisplayPage{
 
-    protected JPanel reportPanel;
-    protected JTable reportTable;
-    protected JScrollPane scrollPane;
-    protected JPanel buttonPanel;
-    protected JButton backButton;
-
-    public NotificationDisplayPage(Predicate<Notification> defaultFilter) {
+    public NotificationDisplayPageAdmin(Predicate<Notification> defaultFilter) {
         super(defaultFilter);
-        baseReports = new HashMap<>(Database.getInstance().getNotificationDatabase().getFiltered(this.defaultFilter));
-        displayedReports = baseReports;
-    }
-
-    public void changeDisplayedReports(Predicate<Notification> newFilter) {
-        displayedReports = new HashMap<>(Database.getInstance().getNotificationDatabase().getFiltered(newFilter));
-        updateReportTable();
     }
 
     @Override
@@ -41,20 +22,6 @@ public class NotificationDisplayPage extends AbstractTablePage<Notification> {
 
         reportPanel = generateReportPage(cardLayout, mainPanel);
         rootPanel.add(reportPanel, "notificationPanel");
-
-
-        reportTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = reportTable.rowAtPoint(e.getPoint());
-                if (row != -1 && e.getClickCount() == 2) {
-                    String type = (String) reportTable.getValueAt(row, 0);
-                    if(type.equals(NotificationType.REPORT_CREATED.value()) || type.equals(NotificationType.REPORT_ASSIGNED.value()) || type.equals(NotificationType.REPORT_MODIFIED.value())){
-                        cardLayout.show(mainPanel, "reportDisplayPage");
-                    }
-                }
-            }
-        });
 
         return rootPanel;
     }
@@ -90,22 +57,12 @@ public class NotificationDisplayPage extends AbstractTablePage<Notification> {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         backButton = new JButton("Powrót");
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "homePage"));
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "adminPage"));
 
         //buttonPanel.add(filterButton);
         buttonPanel.add(backButton);
         contentPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         return contentPanel;
-    }
-
-    JTable createReportTable() {
-        NotificationTable reportTableCreator = new NotificationTable(displayedReports);
-        JTable createdTable = reportTableCreator.createTable();
-        return createdTable;
-    }
-
-    private void updateReportTable() {
-        reportTable.setModel(new NotificationTable(displayedReports).createTable().getModel());
     }
 }

@@ -23,7 +23,7 @@ public class Main {
 
         RegisterPage registerPage = new RegisterPage(Database.getInstance().getUsersDatabase());
         JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
-      
+
         mainPanel.add(loginPanel, "loginPage");
         mainPanel.add(registerPanel, "registerPage");
 

@@ -12,5 +12,6 @@
     <orderEntry type="library" name="jfreechart-1.5.5" level="application" />
     <orderEntry type="library" name="jfreechart-1.5.51" level="application" />
     <orderEntry type="library" name="commons.codec" level="application" />
+    <orderEntry type="library" name="commons-codec-1.17.1" level="application" />
   </component>
 </module>

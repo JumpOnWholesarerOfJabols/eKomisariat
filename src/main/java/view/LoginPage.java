@@ -10,6 +10,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
@@ -124,6 +126,12 @@ public class LoginPage extends AbstractPage {
         JButton loginButton = new JButton("Zaloguj się");
         loginButton.setPreferredSize(new Dimension(100, 35));
         loginButton.addActionListener(e -> handleLogin(cardLayout, mainPanel, emailField, passwordField));
+        passwordField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleLogin(cardLayout, mainPanel, emailField, passwordField);
+            }
+        });
         return loginButton;
     }
 
