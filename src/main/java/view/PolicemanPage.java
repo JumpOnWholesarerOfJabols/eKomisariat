@@ -7,15 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PolicemanPage extends HomePage{
-
-    public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
-        return super.generatePage(cardLayout,mainPanel);
-    }
+    private final PieChartDialog pieChartDialog = new PieChartDialog();
 
     @Override
     protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
         JButton reportButton = new JButton("Statystyki");
         reportButton.setPreferredSize(BTN_DIMENSION);
+
+        reportButton.addActionListener(_ -> {
+            pieChartDialog.updateDatasets(ReportsFilterMethods.filterReportAssigmentWorker(Database.getInstance().getCurrentUserId()));
+            pieChartDialog.setVisible(true);
+        });
         return reportButton;
     }
 

@@ -1,7 +1,10 @@
 package main.java.view;
 
+import main.java.model.Report;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Predicate;
 
 class PieChartDialog extends JDialog {
     private final PieChartPage pieChartPage = new PieChartPage();
@@ -22,5 +25,9 @@ class PieChartDialog extends JDialog {
 
     void updateDatasets(){
         pieChartPage.updateDatasets();
+    }
+
+    void updateDatasets(Predicate<Report> filter){
+        pieChartPage.updateDatasets(filter);
     }
 }

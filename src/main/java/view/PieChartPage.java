@@ -13,6 +13,7 @@ import java.time.DayOfWeek;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 class PieChartPage extends AbstractPage{
@@ -62,10 +63,13 @@ class PieChartPage extends AbstractPage{
         return rootPanel;
     }
 
-    void updateDatasets(){
+    void updateDatasets(Predicate<Report> filter){
+        byStatusDataset.clear();
+        byDOWDataset.clear();
+
         Collection<Report> reps = Database.getInstance()
                 .getReportsDatabase()
-                .getAll()
+                .getFiltered(filter)
                 .values();
 
         Map<Report.reportStatus, List<Report>> repsByStatus = reps.stream().collect(Collectors.groupingBy(Report::getStatus));
@@ -73,5 +77,9 @@ class PieChartPage extends AbstractPage{
 
         repsByStatus.forEach((k, v) -> byStatusDataset.setValue(k, v.size()));
         repsByDOW.forEach((k, v) -> byDOWDataset.setValue(k, v.size()));
+    }
+
+    void updateDatasets(){
+        updateDatasets(_ -> true);
     }
 }
