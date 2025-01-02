@@ -1,6 +1,5 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.database.Database;
 import main.java.model.Report;
 import main.java.utils.ReportsFilterMethods;
@@ -23,8 +22,6 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
     protected JPanel buttonPanel;
     protected JButton filterButton;
     protected JButton backButton;
-
-    private final JComboBox<Integer> policemanComboBox = new JComboBox<>(Database.getInstance().getUsersDatabase().getAll().keySet().toArray(new Integer[0]));
 
     public ReportDisplayPage(Predicate<Report> defaultFilter) {
         super(defaultFilter);
@@ -76,7 +73,7 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return reportPanel;
     }
 
-    private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
+    protected JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
         contentPanel.setMinimumSize(new Dimension(1000, 600));
@@ -106,16 +103,13 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
         return contentPanel;
     }
 
-    private JTable createReportTable() {
+    protected JTable createReportTable() {
         ReportTable reportTableCreator = new ReportTable(displayedReports, editEnabled);
-        JTable createdTable = reportTableCreator.createTable();
-        createdTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
-        return createdTable;
+        return reportTableCreator.createTable();
     }
 
     protected void updateReportTable() {
         reportTable.setModel(new ReportTable(displayedReports, editEnabled).createTable().getModel());
-        reportTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(policemanComboBox));
     }
 
     protected void openFilterDialog() {
@@ -138,13 +132,5 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
             ReportDetailsDialog detailsDialog = new ReportDetailsDialog(null, reportId, report);
             detailsDialog.setVisible(true);
         }
-    }
-
-    private JScrollPane createScrollPane(JTextArea descriptionField) {
-        JScrollPane scrollPane = new JScrollPane(descriptionField);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(900, 200));
-        scrollPane.setMinimumSize(new Dimension(700, 200));
-        return scrollPane;
     }
 }
