@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class NotificationTable {
     private final Map<Integer, Notification> displayedReports;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public NotificationTable(Map<Integer, Notification> displayedReports) {
         this.displayedReports = displayedReports;

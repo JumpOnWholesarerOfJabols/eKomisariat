@@ -117,7 +117,9 @@ public class ReportPage extends AbstractPage{
             } else {
                 Report newReport = new Report(userID, title, description);
                 Database.getInstance().getReportsDatabase().addItemToDatabase(newReport);
-                Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.REPORT_CREATED, Database.getInstance().getReportsDatabase().getItemID(newReport), LocalDateTime.now()));
+                int newReportId = Database.getInstance().getReportsDatabase().getItemID(newReport);
+                Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.REPORT_CREATED, newReportId, LocalDateTime.now()));
+                Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_NEW, newReportId, LocalDateTime.now()));
 
                 JOptionPane.showMessageDialog(null, "Donos przyjęty, obywatelu! Twoje działania pomagają w budowaniu lepszego społeczeństwa. \nTytuł: " + title + "\n\n", "Donos złożony", JOptionPane.INFORMATION_MESSAGE);
             }
