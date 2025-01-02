@@ -1,6 +1,5 @@
 package main.java.view;
 
-import main.java.Main;
 import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
@@ -8,7 +7,6 @@ import main.java.model.Report;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -84,14 +82,18 @@ public class ReportTable {
         model.addTableModelListener(e -> {
             if (e.getType() == TableModelEvent.UPDATE) {
                 if (e.getColumn() == POLICEMAN_COLUMN) {
-                    int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
-                    Report report = displayedReports.get(id);
+                    int reportId = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
+                    Report report = displayedReports.get(reportId);
 
                     int policemanId = Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString());
                     report.setAssignmentWorkerID(policemanId);
+                    report.setStatus(Report.reportStatus.ASSIGNED);
 
-                    Database.getInstance().getReportsDatabase().updateItemInDatabase(id, report);
-                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, id, LocalDateTime.now()));
+                    int userId = report.getUserId();
+
+                    Database.getInstance().getReportsDatabase().updateItemInDatabase(reportId, report);
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, reportId, LocalDateTime.now()));
+                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(userId, NotificationType.REPORT_ASSIGNED, reportId, LocalDateTime.now()));
                 }
             }
         });

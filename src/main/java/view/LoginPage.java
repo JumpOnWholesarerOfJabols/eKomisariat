@@ -184,7 +184,7 @@ public class LoginPage extends AbstractPage {
             mainPanel.add(adminPagePanel, "adminPage");
             cardLayout.show(mainPanel, "adminPage");
         } else if (tryLogIn(emailField, passwordField)) {
-            HomePage homePage = emailField.getText().contains("@eKomisariat.pl") ? new PolicemanPage() : new HomePage();
+            HomePage homePage = emailField.getText().toLowerCase().contains("@ekomisariat.pl") ? new PolicemanPage() : new HomePage();
             JPanel homePagePanel = homePage.generatePage(cardLayout, mainPanel);
             mainPanel.add(homePagePanel, "homePage");
             cardLayout.show(mainPanel, "homePage");

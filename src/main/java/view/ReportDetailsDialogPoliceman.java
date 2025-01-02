@@ -1,9 +1,13 @@
 package main.java.view;
 
+import main.java.database.Database;
+import main.java.model.Notification;
+import main.java.model.NotificationType;
 import main.java.model.Report;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDateTime;
 
 public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
 
@@ -17,21 +21,29 @@ public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
 
         startButton.addActionListener(e -> {
             report.setStatus(Report.reportStatus.STARTED);
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_STARTED, reportId, LocalDateTime.now()));
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(report.getUserId(), NotificationType.REPORT_STATUS_STARTED, reportId, LocalDateTime.now()));
             updateButtons(report);
             parentPage.updateReportTable();
         });
         stopButton.addActionListener(e->{
             report.setStatus(Report.reportStatus.POSTPONED);
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_POSTPONED, reportId, LocalDateTime.now()));
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(report.getUserId(), NotificationType.REPORT_STATUS_POSTPONED, reportId, LocalDateTime.now()));
             updateButtons(report);
             parentPage.updateReportTable();
         });
         closeButton.addActionListener(e->{
             report.setStatus(Report.reportStatus.CLOSED);
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_CLOSED, reportId, LocalDateTime.now()));
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(report.getUserId(), NotificationType.REPORT_STATUS_CLOSED, reportId, LocalDateTime.now()));
             updateButtons(report);
             parentPage.updateReportTable();
         });
         rejectButton.addActionListener(e->{
             report.setStatus(Report.reportStatus.DISMISSED);
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_DISMISSED, reportId, LocalDateTime.now()));
+            Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(report.getUserId(), NotificationType.REPORT_STATUS_DISMISSED, reportId, LocalDateTime.now()));
             updateButtons(report);
             parentPage.updateReportTable();
         });
