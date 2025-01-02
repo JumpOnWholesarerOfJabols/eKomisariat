@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 public interface DatabaseOperations<T> {
     Map<Integer, T> importDataFromFile();
 
+    int getItemID(T item);
     void exportDataToFile();
 
     void addItemToDatabase(T item);

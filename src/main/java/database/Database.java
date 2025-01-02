@@ -11,9 +11,9 @@ public final class Database {
     private static final String USERS_FOLDER_PATH = "src/main/resources/users/";
     private static final String REPORTS_FOLDER_PATH = "src/main/resources/reports/";
     private static final String NOTIFICATION_FOLDER_PATH = "src/main/resources/notifications/";
-    private final FileDatabase<Report> reportsDatabase;
-    private final FileDatabase<User> usersDatabase;
-    private final FileDatabase<Notification> notificationDatabase;
+    private final DatabaseOperations<Report> reportsDatabase;
+    private final DatabaseOperations<User> usersDatabase;
+    private final DatabaseOperations<Notification> notificationDatabase;
 
     private Database() {
         this.reportsDatabase = new FileDatabase<>(REPORTS_FOLDER_PATH);
@@ -34,15 +34,15 @@ public final class Database {
         this.currentUserId = this.usersDatabase.getItemID(currentUser);
     }
 
-    public FileDatabase<Report> getReportsDatabase() {
+    public DatabaseOperations<Report> getReportsDatabase() {
         return reportsDatabase;
     }
 
-    public FileDatabase<User> getUsersDatabase() {
+    public DatabaseOperations<User> getUsersDatabase() {
         return usersDatabase;
     }
 
-    public FileDatabase<Notification> getNotificationDatabase() {
+    public DatabaseOperations<Notification> getNotificationDatabase() {
         return notificationDatabase;
     }
 

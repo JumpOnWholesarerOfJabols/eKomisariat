@@ -106,7 +106,7 @@ public class UsersDatabase implements DatabaseOperations<User> {
         return false;
     }
 
-    public int getUserId(User user) {
+    public int getItemID(User user) {
         return data.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), user))
                 .map(Map.Entry::getKey)
