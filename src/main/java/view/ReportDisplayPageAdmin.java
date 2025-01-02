@@ -130,7 +130,6 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     private void showEditableReportDetails(Integer reportId) {
         Report report = displayedReports.get(reportId);
         if (report != null) {
-            System.out.println("rid: " + reportId);
             EditReportDialogAdmin editDialog = new EditReportDialogAdmin(null, reportId, report);
             editDialog.setVisible(true);
 
