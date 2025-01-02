@@ -44,7 +44,7 @@ class PieChartPage extends AbstractPage{
 
         updateDatasets();
 
-        JFreeChart chartByStatus = ChartFactory.createPieChart("Raporty według statustu", byStatusDataset, true, true, false);
+        JFreeChart chartByStatus = ChartFactory.createPieChart("Raporty według statusu", byStatusDataset, true, true, false);
         JFreeChart chartByDOW = ChartFactory.createPieChart("Raporty według dnia tygodnia", byDOWDataset, true, true, false);
 
         ChartPanel statusPanel = new ChartPanel(chartByStatus);
