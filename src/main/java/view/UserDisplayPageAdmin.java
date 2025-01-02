@@ -27,7 +27,7 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
     }
 
     private void updateUserTable() {
-        reportTable.setModel(new UserTable(displayedUsers, editEnabled).createTable().getModel());
+        reportTable.setModel(new UserTable(displayedUsers, false).createTable().getModel());
     }
 
     @Override
@@ -105,8 +105,12 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
             editDialog.setVisible(true);
 
             try {
-                Predicate<User> emptyFilter = r -> true;
-                changeDisplayedUsers(emptyFilter);
+                if(!filterSwitch) {
+                    displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails().negate());
+                } else {
+                    displayedUsers = Database.getInstance().getUsersDatabase().getFiltered(UsersFilterMethods.filterPolicemanEmails());
+                }
+                updateUserTable();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

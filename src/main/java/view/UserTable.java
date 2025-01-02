@@ -74,21 +74,6 @@ public class UserTable {
             }
         });
 
-//        model.addTableModelListener(e -> {
-//            if(e.getType() == TableModelEvent.UPDATE) {
-//                // This means the policeman attached to the report was updated
-//                if(e.getColumn() == POLICEMAN_COLUMN) {
-//                    int id = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
-//                    Report report = displayedReports.get(id);
-//
-//                    int policemanId = Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString());
-//                    report.setAssignmentWorkerID(policemanId);
-//
-//                    Database.getInstance().getReportsDatabase().updateItemInDatabase(id, report);
-//                    Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(policemanId, NotificationType.REPORT_ASSIGNED, id, LocalDateTime.now()));
-//                }
-//            }
-//        });
 
         return userTable;
     }
