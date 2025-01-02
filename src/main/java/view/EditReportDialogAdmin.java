@@ -95,16 +95,15 @@ public class EditReportDialogAdmin extends JDialog {
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
                 Report updatedReport = new Report(report.getUserId(), titleField.getText(), descriptionField.getText());
-                updatedReport.setAssignmentWorkerID( (Integer) workerComboBox.getSelectedItem());
-                updatedReport.setStatus((Report.reportStatus) statusComboBox.getSelectedItem());
+                updatedReport.setAssignmentWorkerIDWithoutDB( (Integer) workerComboBox.getSelectedItem());
+                updatedReport.setStatusWithoutDB((Report.reportStatus) statusComboBox.getSelectedItem());
 
                 Date dateFromField = reportDate.getDate();
                 LocalDate localDate = dateFromField.toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
-                updatedReport.setDate(localDate);
+                updatedReport.setDateWithoutDB(localDate);
                 Database.getInstance().getReportsDatabase().updateItemInDatabase(reportId, updatedReport);
                 dispose();
             }

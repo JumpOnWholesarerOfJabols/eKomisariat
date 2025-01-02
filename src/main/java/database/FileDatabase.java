@@ -47,6 +47,7 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
     @Override
     public void addItemToDatabase(int id, T item) {
         data.put(id, item);
+        System.out.println("add: " +id);
         fileManager.exportItem(id, item);
     }
 
