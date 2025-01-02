@@ -16,14 +16,12 @@ public class ReportPage extends AbstractPage{
     private JButton sendButton;
     private JScrollPane scrollPane;
 
-    // Generate the report page
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         rootPanel.setLayout(new CardLayout());
 
         JPanel reportPanel = createReportPanel();
         JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
 
-        // Add the content panel to the main report panel
         reportPanel.add(contentPanel, new GridBagConstraints());
         rootPanel.add(reportPanel, "reportForm");
 
@@ -63,7 +61,7 @@ public class ReportPage extends AbstractPage{
 
     private GridBagConstraints createGridBagConstraints() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);  // Dynamic margins
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         return gbc;

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class RegisterPage extends AbstractPage {
-    protected final DatabaseOperations<User> usersDatabase;
 
     protected JTextField nameField;
     protected JTextField surnameField;
@@ -25,9 +24,8 @@ public class RegisterPage extends AbstractPage {
     protected JButton registerButton;
     protected JLabel passwordInfoLabel;
 
-    public RegisterPage(DatabaseOperations<User> usersDatabase) {
+    public RegisterPage() {
         super();
-        this.usersDatabase = usersDatabase;
     }
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
@@ -138,7 +136,7 @@ public class RegisterPage extends AbstractPage {
             String password = Arrays.toString(passwordField.getPassword());
             String hashedPassword = DigestUtils.sha256Hex(password);
             User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), hashedPassword);
-            usersDatabase.addItemToDatabase(user);
+            Database.getInstance().getUsersDatabase().addItemToDatabase(user);
             cardLayout.show(mainPanel, "loginPage");
             resetFields();
             JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");

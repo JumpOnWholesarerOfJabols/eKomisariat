@@ -1,12 +1,9 @@
 package main.java.view;
 
 import main.java.model.Notification;
-import main.java.model.NotificationType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.function.Predicate;
 
 public class NotificationDisplayPageAdmin extends NotificationDisplayPage{

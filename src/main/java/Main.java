@@ -1,6 +1,5 @@
 package main.java;
 
-import main.java.database.*;
 import main.java.view.LoginPage;
 import main.java.view.RegisterPage;
 
@@ -18,10 +17,10 @@ public class Main {
         JPanel mainPanel = new JPanel(cardLayout);
         f.add(mainPanel);
 
-        LoginPage loginPage = new LoginPage(Database.getInstance().getUsersDatabase());
+        LoginPage loginPage = new LoginPage();
         JPanel loginPanel = loginPage.generatePage(cardLayout, mainPanel);
 
-        RegisterPage registerPage = new RegisterPage(Database.getInstance().getUsersDatabase());
+        RegisterPage registerPage = new RegisterPage();
         JPanel registerPanel = registerPage.generatePage(cardLayout, mainPanel);
 
         mainPanel.add(loginPanel, "loginPage");
