@@ -4,6 +4,7 @@ import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.Report;
+import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -44,7 +45,7 @@ public class ReportTable {
                     reportId,
                     report.getUserId(),
                     report.getTitle(),
-                    report.getAssignmentWorkerID(),
+                    Database.getInstance().getUsersDatabase().getAll().get(report.getAssignmentWorkerID()).getEmail(),
                     report.getStatus(),
                     report.getDate()
             };
@@ -85,7 +86,12 @@ public class ReportTable {
                     int reportId = Integer.parseInt(String.valueOf(model.getValueAt(e.getFirstRow(), REPORT_ID_COLUMN)));
                     Report report = displayedReports.get(reportId);
 
-                    int policemanId = Integer.parseInt(model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString());
+                    String policemanEmail = model.getValueAt(e.getFirstRow(), POLICEMAN_COLUMN).toString();
+                    int policemanId = Database.getInstance()
+                            .getUsersDatabase()
+                            .getFiltered(UsersFilterMethods.filterLoginField(policemanEmail))
+                                    .entrySet().stream().findFirst().get().getKey();
+
                     report.setAssignmentWorkerID(policemanId);
                     report.setStatus(Report.reportStatus.ASSIGNED);
 
