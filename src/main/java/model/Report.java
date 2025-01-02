@@ -37,6 +37,10 @@ public class Report implements Serializable {
         updateInDatabase();
     }
 
+    public void setDateWithoutDB(LocalDate date) {
+        this.date = date;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -70,6 +74,10 @@ public class Report implements Serializable {
         updateInDatabase();
     }
 
+    public void setAssignmentWorkerIDWithoutDB(int assignmentWorkerID) {
+        this.assignmentWorkerId = assignmentWorkerID;
+    }
+
     public reportStatus getStatus() {
         return status;
     }
@@ -77,6 +85,10 @@ public class Report implements Serializable {
     public void setStatus(reportStatus status) {
         this.status = status;
         updateInDatabase();
+    }
+
+    public void setStatusWithoutDB(reportStatus status) {
+        this.status = status;
     }
 
     @Override
