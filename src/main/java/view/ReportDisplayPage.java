@@ -139,12 +139,4 @@ public class ReportDisplayPage extends AbstractTablePage<Report> {
             detailsDialog.setVisible(true);
         }
     }
-
-    private JScrollPane createScrollPane(JTextArea descriptionField) {
-        JScrollPane scrollPane = new JScrollPane(descriptionField);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(900, 200));
-        scrollPane.setMinimumSize(new Dimension(700, 200));
-        return scrollPane;
-    }
 }

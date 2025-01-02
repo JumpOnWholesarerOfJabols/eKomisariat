@@ -20,12 +20,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class LoginPage extends AbstractPage {
-    private final DatabaseOperations<User> usersDatabase;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public LoginPage(DatabaseOperations<User> usersDatabase) {
+    public LoginPage() {
         super();
-        this.usersDatabase = usersDatabase;
     }
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {

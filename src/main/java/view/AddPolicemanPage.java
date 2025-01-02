@@ -24,8 +24,8 @@ import static main.java.utils.DataValidation.isPasswordValid;
 public class AddPolicemanPage extends RegisterPage{
     private String generatedEmail;
 
-    public AddPolicemanPage(DatabaseOperations<User> usersDatabase) {
-        super(usersDatabase);
+    public AddPolicemanPage() {
+        super();
     }
 
     @Override

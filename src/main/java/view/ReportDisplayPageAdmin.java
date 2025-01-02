@@ -41,9 +41,6 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
         displayedReports = baseReports;
     }
 
-    private Predicate<Report> getFilter(Predicate<Report> newFilter) {
-        return ReportsFilterMethods.combinedFilter(newFilter, defaultFilter);
-    }
 
     public void changeDisplayedReports(Predicate<Report> newFilter) {
         displayedReports = new HashMap<>(Database.getInstance().getReportsDatabase().getFiltered(newFilter));

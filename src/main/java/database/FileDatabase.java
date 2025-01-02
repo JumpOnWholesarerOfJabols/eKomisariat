@@ -83,8 +83,8 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
         return data.entrySet().stream()
                 .sorted(((o1, o2) -> comparator.compare(o1.getValue(), o2.getValue())))
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, //object -> object.getKey()
-                        Map.Entry::getValue, //object -> object.getValue()
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
                         (o1, o2) -> o1,
                         LinkedHashMap::new
                 ));
@@ -94,8 +94,8 @@ public class FileDatabase<T> implements DatabaseOperations<T>{
     public Map<Integer, T> getFiltered(Predicate<T> filter) {
         return data.entrySet().stream().filter(o -> filter.test(o.getValue()))
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, //object -> object.getKey()
-                        Map.Entry::getValue, //object -> object.getValue()
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
                         (o1, o2) -> o1,
                         HashMap::new
                 ));

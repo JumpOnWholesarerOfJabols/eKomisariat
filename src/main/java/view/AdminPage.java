@@ -126,7 +126,7 @@ public class AdminPage {
                         cardLayout.show(mainPanel, targetPageName);
                     }
                     case adminAddPolicemanPageName -> {
-                        AddPolicemanPage addPolicemanPage = new AddPolicemanPage(Database.getInstance().getUsersDatabase());
+                        AddPolicemanPage addPolicemanPage = new AddPolicemanPage();
                         JPanel addPolicemanPanel = addPolicemanPage.generatePage(cardLayout, mainPanel);
                         mainPanel.add(addPolicemanPanel, targetPageName);
                         cardLayout.show(mainPanel, targetPageName);

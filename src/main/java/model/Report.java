@@ -18,10 +18,6 @@ public class Report implements Serializable {
     private reportStatus status;
     private LocalDate date;
 
-    private static String getCurrentDate(){
-        SimpleDateFormat dayMonthYear = new SimpleDateFormat("dd/MM/yyyy");
-        return dayMonthYear.format(new Date());
-    }
 
     public Report(int userID, String title, String description) {
         this.userId = userID;
@@ -30,11 +26,6 @@ public class Report implements Serializable {
         this.assignmentWorkerId = -1;
         this.status = reportStatus.NEW;
         this.date = LocalDate.now();
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-        updateInDatabase();
     }
 
     public void setDateWithoutDB(LocalDate date) {
@@ -53,17 +44,11 @@ public class Report implements Serializable {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public int getAssignmentWorkerID() {
         return assignmentWorkerId;
