@@ -50,14 +50,8 @@ public class UserDisplayPageAdmin extends ReportDisplayPage{
         return rootPanel;
     }
 
-    public JPanel generateReportPage(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel contentPanel = createContentPanel(cardLayout, mainPanel);
-        reportPanel = createReportPanel();
-        reportPanel.add(contentPanel, new GridBagConstraints());
-        return reportPanel;
-    }
-
-    private JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
+    @Override
+    protected JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(new Color(240, 240, 240));
         contentPanel.setMinimumSize(new Dimension(1000, 600));
