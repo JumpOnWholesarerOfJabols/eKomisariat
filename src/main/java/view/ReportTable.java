@@ -4,6 +4,7 @@ import main.java.database.Database;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.Report;
+import main.java.model.User;
 import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
@@ -41,11 +42,17 @@ public class ReportTable {
             Integer reportId = entry.getKey();
             Report report = entry.getValue();
 
+            User policeman = Database.getInstance().getUsersDatabase().getAll().get(report.getAssignmentWorkerID());
+            String email = "brak";
+            if(policeman != null) {
+                email = policeman.getEmail();
+            }
+
             Object[] row = {
                     reportId,
                     report.getUserId(),
                     report.getTitle(),
-                    Database.getInstance().getUsersDatabase().getAll().get(report.getAssignmentWorkerID()).getEmail(),
+                    email,
                     report.getStatus(),
                     report.getDate()
             };
