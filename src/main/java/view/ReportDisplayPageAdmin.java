@@ -7,6 +7,7 @@ import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Predicate;
@@ -49,6 +50,11 @@ public class ReportDisplayPageAdmin extends ReportDisplayPage {
     @Override
     protected JPanel createContentPanel(CardLayout cardLayout, JPanel mainPanel) {
         JPanel contentPanel = super.createContentPanel(cardLayout, mainPanel);
+
+        for(ActionListener al : backButton.getActionListeners()){
+            backButton.removeActionListener(al);
+        }
+
         backButton.addActionListener(_ -> cardLayout.show(mainPanel, "adminPage"));
 
         statsButton = new JButton("Statystyki");
