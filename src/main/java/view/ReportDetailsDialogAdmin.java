@@ -6,7 +6,6 @@ import main.java.model.Report;
 import main.java.utils.UsersFilterMethods;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,9 +14,9 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 
-public class EditReportDialogAdmin extends JDialog {
+public class ReportDetailsDialogAdmin extends JDialog {
 
-    public EditReportDialogAdmin(Frame owner, Integer reportId, Report report) {
+    public ReportDetailsDialogAdmin(Frame owner, Integer reportId, Report report) {
         super(owner, "Report Details", true);
 
         setLayout(new GridBagLayout());

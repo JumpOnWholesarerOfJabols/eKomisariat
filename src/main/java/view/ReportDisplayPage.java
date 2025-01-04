@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class ReportDisplayPage extends AbstractTablePage<Report> {
-    protected final Map<Integer, Report> baseReports;
+    protected Map<Integer, Report> baseReports;
     protected Map<Integer, Report> displayedReports;
 
     protected JPanel reportPanel;
