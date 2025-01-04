@@ -1,7 +1,6 @@
 package main.java.view;
 
 import main.java.database.Database;
-import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
@@ -132,7 +131,9 @@ public class RegisterPage extends AbstractPage {
     }
 
     private void handleRegisterButtonClick(CardLayout cardLayout, JPanel mainPanel) {
-        if (isDataValid()) {
+        if (!isDataValid()) {
+            JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
+        } else {
             String password = Arrays.toString(passwordField.getPassword());
             String hashedPassword = DigestUtils.sha256Hex(password);
             User user = new User(nameField.getText(), surnameField.getText(), emailField.getText(), hashedPassword);
@@ -141,8 +142,6 @@ public class RegisterPage extends AbstractPage {
             resetFields();
             JOptionPane.showMessageDialog(null, "Zarejestrowano pomyślnie");
             Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(0, NotificationType.USER_CREATED, Database.getInstance().getUsersDatabase().getItemID(user), LocalDateTime.now()));
-        } else {
-            JOptionPane.showMessageDialog(null, "Wypełnij poprawnie wszystkie pola!");
         }
     }
 
@@ -158,6 +157,7 @@ public class RegisterPage extends AbstractPage {
                 && DataValidation.isNameValid(surnameField.getText())
                 && DataValidation.isEmailValid(emailField.getText())
                 && DataValidation.isPasswordValid(new String(passwordField.getPassword()));
+
     }
 
 }

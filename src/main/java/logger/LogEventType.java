@@ -6,7 +6,8 @@ public enum LogEventType {
     ITEM_EXPORTED("Item exported: %s"),
     DATABASE_EXPORTED("Database exported: %s"),
     DATABASE_LOADED("Database loaded: %s"),
-    ADMIN_LOGIN("Admin logged in: %s");
+    ADMIN_LOGIN("Admin logged in: %s"),
+    USER_REGISTERED("User registered: %s");
 
     private final String value;
     LogEventType(String value) {

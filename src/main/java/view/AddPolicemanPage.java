@@ -1,14 +1,12 @@
 package main.java.view;
 
 import main.java.database.Database;
-import main.java.database.DatabaseOperations;
 import main.java.model.Notification;
 import main.java.model.NotificationType;
 import main.java.model.User;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -21,7 +19,7 @@ import java.util.Map;
 import static main.java.utils.DataValidation.isNameValid;
 import static main.java.utils.DataValidation.isPasswordValid;
 
-public class AddPolicemanPage extends RegisterPage{
+public class AddPolicemanPage extends RegisterPage {
     private String generatedEmail;
 
     public AddPolicemanPage() {
