@@ -20,7 +20,7 @@ public class AuthenticationPage extends AbstractPage {
         this.mainPanel = mainPanel;
 
         addCenterPanel();
-        rootPanel.add(createLogoLabel(), BorderLayout.NORTH);
+        rootPanel.add(createTitlePanel(), BorderLayout.NORTH);
         addButtonPanel();
 
         return rootPanel;
@@ -32,6 +32,50 @@ public class AuthenticationPage extends AbstractPage {
         logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30));
         return logoLabel;
     }
+
+    private JPanel createTitlePanel() {
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(23, 29, 50));
+        headerPanel.setLayout(new GridBagLayout());
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+        JLabel logoLabel = createLogoLabel();
+
+        JLabel headerTitle = new JLabel("eKomisariat™");
+        headerTitle.setFont(new Font("Arial", Font.BOLD, 32));
+        headerTitle.setForeground(Color.WHITE);
+
+        JLabel headerDesc = new JLabel("Nasze miejsce na Twoją sprawę");
+        headerDesc.setFont(new Font("Arial", Font.PLAIN, 22));
+        headerDesc.setForeground(Color.WHITE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 20);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        headerPanel.add(logoLabel, gbc);
+
+        JPanel textPanel = new JPanel();
+        textPanel.setBackground(new Color(23, 29, 50));
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        textPanel.add(headerTitle);
+        textPanel.add(headerDesc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 20, 0, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        headerPanel.add(textPanel, gbc);
+
+        return headerPanel;
+    }
+
+
+
 
     private void initializeRootPanel() {
         rootPanel.setLayout(new BorderLayout());
