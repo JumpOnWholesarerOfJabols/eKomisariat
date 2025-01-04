@@ -6,22 +6,20 @@ import main.java.utils.ReportsFilterMethods;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class HomePage extends AbstractPage{
-    protected static final Dimension BTN_DIMENSION = new Dimension(200, 200);
+public class HomePage extends AbstractPage {
+    protected static final Dimension BTN_DIMENSION = new Dimension(200, 50);
+    private JLabel centerLabel;
+    private JPanel centerPanel;
 
     public JPanel generatePage(CardLayout cardLayout, JPanel mainPanel) {
         validateUser(mainPanel);
-
         initializeRootPanel();
 
-        addWelcomeLabel();
-
-        JPanel spacerPanel = createSpacerPanel();
-        JPanel controlsPanel = createControlsPanel(cardLayout, mainPanel);
-
-        spacerPanel.add(controlsPanel);
-        rootPanel.add(spacerPanel);
+        addCenterPanel();
+        addButtonPanel(cardLayout, mainPanel);
 
         return rootPanel;
     }
@@ -35,85 +33,116 @@ public class HomePage extends AbstractPage{
     }
 
     private void initializeRootPanel() {
-        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
-        rootPanel.setBackground(new Color(50, 150, 200));
+        rootPanel.setLayout(new BorderLayout());
+        rootPanel.setBackground(new Color(23, 29, 50));
     }
 
-    private void addWelcomeLabel() {
-        String welcome = "Witaj ".concat(Database.getInstance().getCurrentUser().getName());
-        JLabel welcomeLabel = new JLabel(welcome);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        welcomeLabel.setForeground(Color.WHITE);
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rootPanel.add(welcomeLabel);
+    private void addCenterPanel() {
+        centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(40, 50, 80));
+
+        centerLabel = new JLabel("", SwingConstants.CENTER);
+        centerLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        centerLabel.setForeground(Color.WHITE);
+        centerPanel.add(centerLabel, BorderLayout.CENTER);
+        centerLabel.setText("Witaj " + Database.getInstance().getCurrentUser().getName());
+
+        centerPanel.setBorder(BorderFactory.createLineBorder(new Color(19, 29, 50), 10));
+
+        rootPanel.add(centerPanel, BorderLayout.CENTER);
     }
 
-    private JPanel createSpacerPanel() {
-        return new JPanel(new GridBagLayout());
+    private void addButtonPanel(CardLayout cardLayout, JPanel mainPanel) {
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 0));
+        buttonPanel.setBackground(new Color(24, 35, 53));
+
+        buttonPanel.add(createButton1(cardLayout, mainPanel));
+        buttonPanel.add(createButton2(cardLayout, mainPanel));
+        buttonPanel.add(createButton3(cardLayout, mainPanel));
+        buttonPanel.add(createButton4(cardLayout, mainPanel));
+
+        rootPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private JPanel createControlsPanel(CardLayout cardLayout, JPanel mainPanel) {
-        JPanel controlsPanel = new JPanel();
-        controlsPanel.setLayout(new FlowLayout());
-        controlsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        addControlButtons(controlsPanel, cardLayout, mainPanel);
-
-        return controlsPanel;
-    }
-
-    private void addControlButtons(JPanel controlsPanel, CardLayout cardLayout, JPanel mainPanel) {
-        controlsPanel.add(firstButton(cardLayout, mainPanel));
-        controlsPanel.add(secondButton(cardLayout, mainPanel));
-        controlsPanel.add(thirdButton(cardLayout, mainPanel));
-
-        JButton logoutButton = createLogoutButton(cardLayout, mainPanel);
-        rootPanel.add(logoutButton);
-    }
-
-    private JButton createLogoutButton(CardLayout cardLayout, JPanel mainPanel) {
-        JButton logoutButton = new JButton("Wyloguj");
-        logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
-        logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return logoutButton;
-    }
-
-    protected JButton firstButton(CardLayout cardLayout, JPanel mainPanel) {
+    protected JButton createButton1(CardLayout cardLayout, JPanel mainPanel) {
         ReportPage reportPage = new ReportPage();
         mainPanel.add(reportPage.generatePage(cardLayout, mainPanel), "reportPage");
 
-        JButton reportButton = new JButton("Nowy donos");
-        reportButton.setPreferredSize(BTN_DIMENSION);
-        reportButton.addActionListener(e -> cardLayout.show(mainPanel, "reportPage"));
-        return reportButton;
+        JButton button = createHoverButton("Nowy donos", "Donieś", new Color(40, 50, 90), cardLayout, mainPanel, "reportPage");
+        button.setBackground(new Color(30, 40, 90));
+        button.setForeground(Color.WHITE);
+        button.addActionListener(e -> cardLayout.show(mainPanel, "reportPage"));
+        return button;
     }
 
-    protected JButton secondButton(CardLayout cardLayout, JPanel mainPanel) {
+    protected JButton createButton2(CardLayout cardLayout, JPanel mainPanel) {
         ReportDisplayPage reportDisplayPage = new ReportDisplayPage(ReportsFilterMethods.filterUserId(Database.getInstance().getCurrentUserId()));
         mainPanel.add(reportDisplayPage.generatePage(cardLayout, mainPanel), "reportDisplayPage");
 
-        JButton reportsButton = new JButton("Wyświetl listę raportów");
-        reportsButton.setPreferredSize(BTN_DIMENSION);
-        reportsButton.addActionListener(e -> {
+        JButton button = createHoverButton("Lista raportów", "Moje donosy", new Color(40, 50, 100), cardLayout, mainPanel, "reportDisplayPage");
+        button.setBackground(new Color(30, 40, 90));
+        button.setForeground(Color.WHITE);
+
+        button.addActionListener(e -> {
             reportDisplayPage.changeDisplayedReports(reportDisplayPage.defaultFilter);
             cardLayout.show(mainPanel, "reportDisplayPage");
         });
-
-        return reportsButton;
+        return button;
     }
 
-    protected JButton thirdButton(CardLayout cardLayout, JPanel mainPanel) {
+    protected JButton createButton3(CardLayout cardLayout, JPanel mainPanel) {
         NotificationDisplayPage notificationDisplayPage = new NotificationDisplayPage(NotificationsFilterMethods.filterByTargetUserID(Database.getInstance().getCurrentUserId()));
         mainPanel.add(notificationDisplayPage.generatePage(cardLayout, mainPanel), "notificationDisplayPage");
+        JButton button = createHoverButton("Powiadomienia", "Moje powiadomienia", new Color(40, 50, 90), cardLayout, mainPanel, "notificationDisplayPage");
+        button.setBackground(new Color(30, 40, 90));
+        button.setForeground(Color.WHITE);
 
-        JButton notificationsButton = new JButton("Wyświetl powiadomienia");
-        notificationsButton.setPreferredSize(BTN_DIMENSION);
-        notificationsButton.addActionListener(e -> {
+        button.addActionListener(e -> {
             notificationDisplayPage.changeDisplayedReports(notificationDisplayPage.defaultFilter);
             cardLayout.show(mainPanel, "notificationDisplayPage");
         });
-
-        return notificationsButton;
+        return button;
     }
 
+    protected JButton createButton4(CardLayout cardLayout, JPanel mainPanel) {
+        JButton button = createHoverButton("Wyloguj", "Wyloguj mnie", new Color(40, 50, 100), cardLayout, mainPanel, "loginPage");
+        button.setBackground(new Color(30, 40, 90));
+        button.setForeground(Color.WHITE);
+
+        button.addActionListener(e -> cardLayout.show(mainPanel, "loginPage"));
+        return button;
+    }
+
+
+    protected JButton createHoverButton(String text, String hoverText, Color hoverColor, CardLayout cardLayout, JPanel mainPanel, String page) {
+        JButton button = new JButton(text);
+        button.setPreferredSize(BTN_DIMENSION);
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setBackground(new Color(50, 60, 110));
+
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                centerLabel.setText(hoverText);
+                centerPanel.setBackground(hoverColor);
+
+                button.setBackground(hoverColor);
+                button.setForeground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                centerLabel.setText("Witaj " + Database.getInstance().getCurrentUser().getName());
+                centerPanel.setBackground(new Color(40, 50, 80));
+
+                button.setBackground(new Color(30, 40, 90));
+                button.setForeground(Color.WHITE);
+            }
+        });
+
+        return button;
+    }
 }

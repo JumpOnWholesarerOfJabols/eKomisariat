@@ -19,6 +19,11 @@ public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
     public ReportDetailsDialogPoliceman(Frame owner, Integer reportId, Report report, ReportDisplayPagePoliceman parentPage) {
         super(owner, reportId, report);
 
+        setupButton(startButton);
+        setupButton(stopButton);
+        setupButton(closeButton);
+        setupButton(rejectButton);
+
         startButton.addActionListener(e -> {
             report.setStatus(Report.reportStatus.STARTED);
             Database.getInstance().getNotificationDatabase().addItemToDatabase(new Notification(Database.getInstance().getCurrentUserId(), NotificationType.REPORT_STATUS_STARTED, reportId, LocalDateTime.now()));
@@ -58,7 +63,6 @@ public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
         if (component instanceof Container) {
             ((Container) component).removeAll();
 
-            addComponents();
             switch (report.getStatus()) {
                 case NEW, ASSIGNED, POSTPONED -> ((Container) component).add(startButton);
                 case STARTED -> {
@@ -67,6 +71,7 @@ public class ReportDetailsDialogPoliceman extends ReportDetailsDialog {
                     ((Container) component).add(closeButton);
                 }
             }
+            addComponents();
 
             component.revalidate();
             component.repaint();
